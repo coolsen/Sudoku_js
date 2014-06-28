@@ -1,0 +1,631 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>HTML der indeholder Java code og printer hva document.write</title>
+ 
+<script language="JavaScript">
+
+i=0;
+var  matsz=9, sqrmz=  Math.sqrt(matsz);
+var javaInform = new Array(matsz*matsz);
+var  strContent = new Array(10); 
+var  guess_mb = new Array(matsz);     
+var  mat = new Array(matsz*matsz);  mat_st = new Array(matsz*matsz); mat_rn = new Array(matsz*matsz);
+var  mat_cn = new Array(matsz*matsz); mat_kn = new Array(matsz*matsz);
+var   toDoField =    toDoField = new Array(matsz*matsz); toDoDigit = new Array(matsz*matsz);
+var  digit = digit = new Array(matsz);
+var row = new Array(matsz); for (i=0; i <matsz; i++) row[i]=new Array(matsz);  // two dimentional Arrays strange syntaks?? 
+var col = new Array(matsz); for (i=0; i <matsz; i++) col[i]=new Array(matsz);
+var kvad = new Array(matsz); for (i=0; i <matsz; i++) kvad[i]=new Array(matsz);
+var mat_mb = new Array((matsz+1)*(matsz+1)); for (i=0; i <((matsz+1)*(matsz+1)); i++) mat_mb[i]=new Array(matsz+1+1);
+var start,elapsed,flt,outTxt;
+ var ERROR =0; contFlg=-1;
+   digit=0; ERROR=0; toDoNum=0; tryl=0; tdi=0; contFlg=-1; missFields=20; missFieldsFormer=0; fillSt=1; guessFl=0;
+  var ERROR =0; contFlg=-1; guess_i=0;
+  strContent[0] = "7   9    " + "  46 2   " + "2    7 65" + " 79   5 3" + "  2   9  " + "3 6   81 " + "64 5    7" +
+                   "   7 34  " + "    4   2";
+
+  strContent[1] = " 3 7  29 " + "258  17  " + "     5   " + "  9   8  " + "   423   " + "  2   3  " + "   8     " + 
+                   "  56  937" + " 96  4 8 ";
+  strContent[2] = "    12  8" + "  76  2 3" + " 58  971 " + "57 2     " + " 913 742 " + "     6 37" + " 128  95 " + 
+                    "3 5  46  " + "4  17    ";
+
+  strContent[3] = " 2  8 94 " + "     23  " + "5 4     1" + "4    8  3" + "    9    " + "6  1    7" + "8     2 9" + 
+                   "  16     " + " 43 5  7 ";
+ strContent[4] = "      1 4" + " 6 3   2 " + "2    7  9" + "8  5   4 " + " 564 938 " + " 3   2  7" + "6  7    1" + 
+                   " 7   4 9 " + "5 4      ";
+ strContent[5] = "  3 4  9 " + " 54   3  " + "76    1  " + "     9 38" + "    2    " + "63 7     " + "  6    53" + 
+                   "  2   71 " + " 8  1 9  ";
+
+
+strNo=0;
+function clearMat_mb() {
+for (i=0; i<matsz*matsz; i++)  {   //Fill the hole sudoku with "true" means that all fields(i) can bee all digits   
+  for (y=0; y<matsz; y++)  { 
+    mat_mb[i][(y+1)] = true; 
+  }
+}
+for (i=0; i<matsz*matsz; i++)  {    //FilL the hole sudoku (mat[i]) with "empty" =0  
+  mat[i] = 0;    //the field is empty = 0
+  mat_st[i] = 0; //no number in field = state 0 
+}
+} // function
+
+function initContext() {
+flt=0; 
+for (y=0; y<matsz; y++) {
+  for (x=0; x<matsz; x++) row [y][x] = flt++;
+}
+
+flt=0; 
+for (x=0; x<matsz; x++) {
+  flt=x;
+  for (y=0; y<matsz; y++) {
+    col [x][y] = flt;
+    flt = flt + matsz;
+  }
+}
+
+flt=0;
+for (x=0; x<matsz; x++) {
+  xx=x; flt=0;
+  while (xx >= matsz/sqrmz)  {
+    flt = flt + matsz * matsz/sqrmz;
+    xx = xx - matsz/sqrmz; 
+  } 
+  while (xx > 0)  {
+    flt = flt + matsz/sqrmz;
+    xx--; 
+  }
+  for (y=0; y<matsz; y++)  {
+    if ((y!=0) &&  (y % (matsz/sqrmz) == 0)) flt= flt + matsz - matsz/sqrmz;
+    kvad[x][y]=flt++; 
+  }
+}
+rn=0; cn=0; kn=0;
+
+for (i=0; i < matsz*matsz; i++) {
+  mat_rn[i] = rn;  if ((i != 0 ) && (((i + 1) % matsz) == 0)) rn++;
+  mat_cn[i] = cn;  cn++; if (cn==matsz) cn=0;
+}
+
+for (x=0; x<matsz; x++)  { 
+  for (y=0; y<matsz; y++)  { 
+  flt= kvad[x][y];   mat_kn[flt] = x;  
+  }
+}
+
+for (i=0; i<matsz*matsz; i++)  {   //Fill the hole sudoku with "true" means that all fields(i) can bee all digits   
+  for (y=0; y<matsz; y++)  { 
+    mat_mb[i][(y+1)] = true; 
+  }
+}
+
+for (i=0; i<matsz*matsz; i++)  {    //FilL the hole sudoku (mat[i]) with "empty" =0  
+  mat[i] = 0;    //the field is empty = 0
+  mat_st[i] = 0; //no number in field = state 0 
+}
+} // function
+
+
+function inForm(){
+ javaInform[0] = document.sudoku.f0.value;
+ javaInform[1] = document.sudoku.f1.value;
+ javaInform[2] = document.sudoku.f2.value;
+ javaInform[3] = document.sudoku.f3.value;
+ javaInform[4] = document.sudoku.f4.value;
+ javaInform[5] = document.sudoku.f5.value;
+ javaInform[6] = document.sudoku.f6.value;
+ javaInform[7] = document.sudoku.f7.value;
+ javaInform[8] = document.sudoku.f8.value;
+ javaInform[9] = document.sudoku.f9.value;
+ javaInform[10] = document.sudoku.f10.value;
+ javaInform[11] = document.sudoku.f11.value;
+ javaInform[12] = document.sudoku.f12.value;
+ javaInform[13] = document.sudoku.f13.value;
+ javaInform[14] = document.sudoku.f14.value;
+ javaInform[15] = document.sudoku.f15.value;
+ javaInform[16] = document.sudoku.f16.value;
+ javaInform[17] = document.sudoku.f17.value;
+ javaInform[18] = document.sudoku.f18.value;
+ javaInform[19] = document.sudoku.f19.value;
+ javaInform[20] = document.sudoku.f20.value;
+ javaInform[21] = document.sudoku.f21.value;
+ javaInform[22] = document.sudoku.f22.value;
+ javaInform[23] = document.sudoku.f23.value;
+ javaInform[24] = document.sudoku.f24.value;
+ javaInform[25] = document.sudoku.f25.value;
+ javaInform[26] = document.sudoku.f26.value;
+ javaInform[27] = document.sudoku.f27.value;
+ javaInform[28] = document.sudoku.f28.value;
+ javaInform[29] = document.sudoku.f29.value;
+ javaInform[30] = document.sudoku.f30.value;
+ javaInform[31] = document.sudoku.f31.value;
+ javaInform[32] = document.sudoku.f32.value;
+ javaInform[33] = document.sudoku.f33.value;
+ javaInform[34] = document.sudoku.f34.value;
+ javaInform[35] = document.sudoku.f35.value;
+ javaInform[36] = document.sudoku.f36.value;
+ javaInform[37] = document.sudoku.f37.value;
+ javaInform[38] = document.sudoku.f38.value;
+ javaInform[39] = document.sudoku.f39.value;
+ javaInform[40] = document.sudoku.f40.value;
+ javaInform[41] = document.sudoku.f41.value;
+ javaInform[42] = document.sudoku.f42.value;
+ javaInform[43] = document.sudoku.f43.value;
+ javaInform[44] = document.sudoku.f44.value;
+ javaInform[45] = document.sudoku.f45.value;
+ javaInform[46] = document.sudoku.f46.value;
+ javaInform[47] = document.sudoku.f47.value;
+ javaInform[48] = document.sudoku.f48.value;
+ javaInform[49] = document.sudoku.f49.value;
+ javaInform[50] = document.sudoku.f50.value;
+ javaInform[51] = document.sudoku.f51.value;
+ javaInform[52] = document.sudoku.f52.value;
+ javaInform[53] = document.sudoku.f53.value;
+ javaInform[54] = document.sudoku.f54.value;
+ javaInform[55] = document.sudoku.f55.value;
+ javaInform[56] = document.sudoku.f56.value;
+ javaInform[57] = document.sudoku.f57.value;
+ javaInform[58] = document.sudoku.f58.value;
+ javaInform[59] = document.sudoku.f59.value;
+ javaInform[60] = document.sudoku.f60.value;
+ javaInform[61] = document.sudoku.f61.value;
+ javaInform[62] = document.sudoku.f62.value;
+ javaInform[63] = document.sudoku.f63.value;
+ javaInform[64] = document.sudoku.f64.value;
+ javaInform[65] = document.sudoku.f65.value;
+ javaInform[66] = document.sudoku.f66.value;
+ javaInform[67] = document.sudoku.f67.value;
+ javaInform[68] = document.sudoku.f68.value;
+ javaInform[69] = document.sudoku.f69.value;
+ javaInform[70] = document.sudoku.f70.value;
+ javaInform[71] = document.sudoku.f71.value;
+ javaInform[72] = document.sudoku.f72.value;
+ javaInform[73] = document.sudoku.f73.value;
+ javaInform[74] = document.sudoku.f74.value;
+ javaInform[75] = document.sudoku.f75.value;
+ javaInform[76] = document.sudoku.f76.value;
+ javaInform[77] = document.sudoku.f77.value;
+ javaInform[78] = document.sudoku.f78.value;
+ javaInform[79] = document.sudoku.f79.value;
+ javaInform[80] = document.sudoku.f80.value;
+}
+function outForm(){
+ document.sudoku.f0.value = javaInform[0];
+ document.sudoku.f1.value = javaInform[1];
+ document.sudoku.f2.value = javaInform[2];
+ document.sudoku.f3.value = javaInform[3];
+ document.sudoku.f4.value = javaInform[4];
+ document.sudoku.f5.value = javaInform[5];
+ document.sudoku.f6.value = javaInform[6];
+ document.sudoku.f7.value = javaInform[7];
+ document.sudoku.f8.value = javaInform[8];
+ document.sudoku.f9.value = javaInform[9];
+ document.sudoku.f10.value = javaInform[10];
+ document.sudoku.f11.value = javaInform[11];
+ document.sudoku.f12.value = javaInform[12];
+ document.sudoku.f13.value = javaInform[13];
+ document.sudoku.f14.value = javaInform[14];
+ document.sudoku.f15.value = javaInform[15];
+ document.sudoku.f16.value = javaInform[16];
+ document.sudoku.f17.value = javaInform[17];
+ document.sudoku.f18.value = javaInform[18];
+ document.sudoku.f19.value = javaInform[19];
+ document.sudoku.f20.value = javaInform[20];
+ document.sudoku.f21.value = javaInform[21];
+ document.sudoku.f22.value = javaInform[22];
+ document.sudoku.f23.value = javaInform[23];
+ document.sudoku.f24.value = javaInform[24];
+ document.sudoku.f25.value = javaInform[25];
+ document.sudoku.f26.value = javaInform[26];
+ document.sudoku.f27.value = javaInform[27];
+ document.sudoku.f28.value = javaInform[28];
+ document.sudoku.f29.value = javaInform[29];
+ document.sudoku.f30.value = javaInform[30];
+ document.sudoku.f31.value = javaInform[31];
+ document.sudoku.f32.value = javaInform[32];
+ document.sudoku.f33.value = javaInform[33];
+ document.sudoku.f34.value = javaInform[34];
+ document.sudoku.f35.value = javaInform[35];
+ document.sudoku.f36.value = javaInform[36];
+ document.sudoku.f37.value = javaInform[37];
+ document.sudoku.f38.value = javaInform[38];
+ document.sudoku.f39.value = javaInform[39];
+ document.sudoku.f40.value = javaInform[40];
+ document.sudoku.f41.value = javaInform[41];
+ document.sudoku.f42.value = javaInform[42];
+ document.sudoku.f43.value = javaInform[43];
+ document.sudoku.f44.value = javaInform[44];
+ document.sudoku.f45.value = javaInform[45];
+ document.sudoku.f46.value = javaInform[46];
+ document.sudoku.f47.value = javaInform[47];
+ document.sudoku.f48.value = javaInform[48];
+ document.sudoku.f49.value = javaInform[49];
+ document.sudoku.f50.value = javaInform[50];
+ document.sudoku.f51.value = javaInform[51];
+ document.sudoku.f52.value = javaInform[52];
+ document.sudoku.f53.value = javaInform[53];
+ document.sudoku.f54.value = javaInform[54];
+ document.sudoku.f55.value = javaInform[55];
+ document.sudoku.f56.value = javaInform[56];
+ document.sudoku.f57.value = javaInform[57];
+ document.sudoku.f58.value = javaInform[58];
+ document.sudoku.f59.value = javaInform[59];
+ document.sudoku.f60.value = javaInform[60];
+ document.sudoku.f61.value = javaInform[61];
+ document.sudoku.f62.value = javaInform[62];
+ document.sudoku.f63.value = javaInform[63];
+ document.sudoku.f64.value = javaInform[64];
+ document.sudoku.f65.value = javaInform[65];
+ document.sudoku.f66.value = javaInform[66];
+ document.sudoku.f67.value = javaInform[67];
+ document.sudoku.f68.value = javaInform[68];
+ document.sudoku.f69.value = javaInform[69];
+ document.sudoku.f70.value = javaInform[70];
+ document.sudoku.f71.value = javaInform[71];
+ document.sudoku.f72.value = javaInform[72];
+ document.sudoku.f73.value = javaInform[73];
+ document.sudoku.f74.value = javaInform[74];
+ document.sudoku.f75.value = javaInform[75];
+ document.sudoku.f76.value = javaInform[76];
+ document.sudoku.f77.value = javaInform[77];
+ document.sudoku.f78.value = javaInform[78];
+ document.sudoku.f79.value = javaInform[79];
+ document.sudoku.f80.value = javaInform[80];
+}
+
+
+function printContext() {
+document.write( "******* ROW ************<br>"); 
+for (x=0; x<matsz;x++) {
+  for (y=0; y<matsz;y++) document.write( row[x][y] + " ");
+  document.write("<br>"); 
+}
+document.write( "******* COL ************<br>");
+// if (tryl=1)  text = prompt ("Single stepping ... Tryl:" + tryl + "Still missing:" + missFields + "Fields<br>");   
+
+for (x=0; x<matsz;x++) {
+  for (y=0; y<matsz;y++) document.write( col[x][y] + " ");
+  document.write("<br>"); 
+}
+document.write( "******* KVAD ***********<br>"); 
+for (x=0; x<matsz;x++) {
+  for (y=0; y<matsz;y++) document.write( kvad[x][y] + " ");
+  document.write("<br>"); 
+}
+
+document.write( "******* ROW MAT ********<br>"); 
+for (x=0; x<matsz; x++)  { 
+  for (y=0; y<matsz; y++)  { 
+    document.write(mat_rn[y+x*matsz] + " ");
+  }
+  document.write("<br>"); 
+}
+document.write( "******* COL MAT ********<br>"); 
+for (x=0; x<matsz; x++)  { 
+  for (y=0; y<matsz; y++)  { 
+    document.write(mat_cn[y+x*matsz] + " ");
+  }
+  document.write("<br>"); 
+}  
+document.write( "******* KVAD MAT *******<br>"); 
+for (x=0; x<matsz; x++)  { 
+  for (y=0; y<matsz; y++)  { 
+  document.write(mat_kn[y+x*matsz] + " ");
+  }
+  document.write("<br>"); 
+}
+} //function
+function writeMat( index, number, fillstate) {
+if (mat_mb [index][number]) { mat[index] = number; mat_st[index] = fillstate; }                // fill in sudoku       
+else {
+  if (mat[index] == number) return 1; // if we are trying to set in same number as already in it's OK
+  else return 2;
+}
+var crn = mat_rn[index];var ccn = mat_cn[index];var ckn = mat_kn[index];
+var y=0;
+mat_mb[row [crn][0]][0]
+mat_mb[kvad [ckn][0]][0] = false;
+for (y=0;y<matsz;y++) {
+  mat_mb[row [crn][y]][number] = false;
+  mat_mb[col [ccn][y]][number] = false;
+  mat_mb[kvad [ckn][y]][number] = false;
+}
+return 0;
+} //function writeMat
+
+function queryMat() {
+emptyFields = 0;
+for (x=0; x<matsz; x++)  { 
+  for (y=0; y<matsz; y++)  { 
+    if(mat[y+x*matsz] != 0) ;
+    else emptyFields++;
+  }
+} // for x
+return emptyFields;
+} // function
+
+
+function printMat() {
+//document.write( "****** SuDoKu *******<br>");
+for (x=0; x<matsz; x++)  { 
+  for (y=0; y<matsz; y++)  { 
+    if(mat[y+x*matsz] != 0) {/*document.write(mat[y+x*matsz] + " ");*/javaInform[y+x*matsz] = mat[y+x*matsz]; } 
+    else {/*document.write(". ");*/ javaInform[y+x*matsz] = ""; }
+  }
+  if (x==matsz-1) {
+//    if (missFields!=0) document.write( "I have:" + missFields + " fields to fill ..");
+//    else  { document.write( "You have DONE ALL MY WORK ...... by by");/* return; */ }
+  }
+  if (x!=matsz-1); /* document.write( "<br>"); */ 
+} // for x
+//document.write( "Før Outform i printMat<br>");
+outForm(); // copy to browser
+//document.write( "Efter  Outform i printMat<br>");
+} // function
+
+function FindSafeMoves() {
+//  *********************** find a field (mat[i] where only one digit is posible **********************    
+for (i=0; i<matsz*matsz;i++) {
+  if (mat[i]!=0) {continue;}
+  ncnt=0;
+  for (y=1; y<matsz+1; y++) {
+    if (mat_mb [i][y]) {ncnt++; digit=y; }   
+  }
+  if (ncnt == 1)  { toDoField[toDoNum] = i;toDoDigit[toDoNum++] = digit; }
+}
+//  ***************** find a row and digit combination where only one field is posible ****************    
+for (x=0;x<matsz;x++) {
+  for (digit=1;digit<matsz+1;digit++) {
+    ncnt=0;
+    for (y=0;y<matsz;y++) {
+      if((mat_mb[row [x][y]][digit]) && (mat[row [x][y]]==0)){i=row [x][y];ncnt++ ;   }
+    }
+    if (ncnt==1)  { toDoField[toDoNum] = i;toDoDigit[toDoNum++] = digit; }
+  }
+}
+//  ***************** find a col and digit combination where only one field is posible ****************    
+for (x=0;x<matsz;x++) {
+  for (digit=1;digit<matsz+1;digit++) {
+    ncnt=0;
+    for (y=0;y<matsz;y++) {
+      if((mat_mb[col [x][y]][digit]) && (mat[col [x][y]]==0)){i=col [x][y];ncnt++ ;   }
+    }
+    if (ncnt==1)  { toDoField[toDoNum] = i;toDoDigit[toDoNum++] = digit; }
+  }
+}
+//  ***************** find a kvad and digit combination where only one field is posible ****************    
+for (x=0;x<matsz;x++) {
+  for (digit=1;digit<matsz+1;digit++) {
+    ncnt=0;
+    for (y=0;y<matsz;y++) {                                   //i=y+x*matsz; 
+      if((mat_mb[kvad [x][y]][digit]) && (mat[kvad [x][y]]==0)){i=kvad [x][y];ncnt++ ;   }
+    }
+    if (ncnt==1)  { toDoField[toDoNum] = i;toDoDigit[toDoNum++] = digit; }
+  }
+}  //for x
+} // function
+
+function backupMat() {
+      printMat();
+
+} // function
+
+function restoreMat() {
+      readInSudoku();
+
+} // function
+function readPreSudoku() { 
+  document.sudoku.myarea.value = "\r\n"; 
+  initContext();
+  fillSt=0;
+  clearMat_mb();
+  inForm();
+  document.sudoku.time.value =""; // clear time /status field
+  ERROR=0;  fillSt=1;
+  for (i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
+      ch = strContent[strNo].substring(i,(i+1)); // ch is a String (one letter)
+      if (ch == " ") ;
+      else { //else ch                 // only fill in if digit
+         digit = +ch;  // digit is int
+
+         if (writeMat( i, digit , fillSt)!= 0) {
+            document.write("Error imposible to fill in field:" + i + "(" + (i%matsz) + "," + (i/matsz) + ")" + "->" 
+            + digit +"<br>" );
+            ERROR=1;
+         }//if
+    
+      } //else ch
+  } //for
+strNo++;
+if (strNo >5 ) strNo =0;
+printMat();
+//document.close();
+} // function
+
+function readInSudoku() { 
+  document.sudoku.time.value =""; // clear time /status field
+  ERROR=0;
+  initContext();
+  fillSt=0;
+  clearMat_mb();
+  inForm();
+  fillSt=1;
+  for (i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
+    ch=javaInform[i]; 
+    if ((ch == " ") || (ch =="")) mat[i] =0;
+    else {                  // only fill in if digit
+       digit = +ch;  // digit is int
+
+       if (writeMat( i, digit , fillSt)!= 0) {
+ //        document.write("Error imposible to fill in field:" + i + "(" + (i%matsz) + "," + (i/matsz) + ")" + "->" 
+ //        + digit +"<br>" );
+         ERROR=1;
+         break;
+       }//if
+
+    } //else
+  } //for
+printMat();
+} // function
+
+function calculateS() {
+  status= ".";
+  outTxt = "."; //\r\n
+//  status= status + strNo;
+  guessFl=0; 
+  readInSudoku();
+  if (ERROR!=0) {document.sudoku.time.value ="ERROR1"; return;}
+  missFields=queryMat(); 
+  if (missFields>81-22) {document.sudoku.time.value ="ERROR2"; return;}
+
+  printMat(); // to clear old form on screen (if any) (not cleared by browser refress button!!!!!)
+  if (ERROR != 0) { document.write( "The ERROR in input file Causing sudoku to leave !! #? :-) ...... <br>");  return;   } 
+  toDoNum=0; 
+  if (missFields==0){ document.sudoku.time.value ="Det tog 0 millisekunder"; return;}
+  start = new Date().getTime(); // timestamp now in start
+  contFlg=-1;
+  for (tryl=0; (tryl<30 && contFlg!=0); tryl++) {
+    toDoNum=0;
+
+    FindSafeMoves();
+
+//  TDI 1***************** insert Digits from toDo in mat[] (and set mat_mb[] correct) ****************    
+    tdi=0;
+    if (fillSt==1)fillSt++;
+    WrCol=0; 
+    for (tdi=0; tdi<toDoNum; tdi++ ) {
+       i=toDoField[tdi]; digit=toDoDigit[tdi];
+//       outTxt = outTxt + i + "->" + digit + " ";
+//       if ((tdi == 4) || (tdi == 8) || (tdi == 12)) outTxt = outTxt + "\r\n";
+      
+       ret = writeMat( i, digit , fillSt);
+       if (ret==2) {ERROR=-1; }
+       if (ret==0) {outTxt = outTxt + i + "->" + digit + " "; WrCol++; if (WrCol % 5==0) { outTxt = outTxt + "\r\n"; WrCol=0} }
+
+    } //for TDI
+    missFields=queryMat();
+    if (missFields!=0) contFlg=-1;
+  //  printMat();
+    if (missFields==0){
+//      printMat();
+      var elapsed = new Date().getTime() - start;
+      if (elapsed < 0) elapset+=24*60*60*1000; //if calculating is started just before midtnight
+//      status = "Det tog " + elapsed +  " millisekunder";
+//      document.sudoku.time.value = status;
+      document.sudoku.time.value = "Det tog " + elapsed +  " millisekunder";
+      printMat();
+      document.sudoku.myarea.value = outTxt; 
+      return; 
+    }  
+
+    if ((guessFl != 0) && (ERROR != 0)) { 
+      clearMat_mb();
+      restoreMat();
+      outTxt = outTxt + "Restore ";
+
+      mat_mb[guess_i][guess_mb[0]] = false;
+      ERROR = 0;
+      guessFl = 0; // 10/10-10
+      outTxt = outTxt + "Nej" + guess_i + "->" + guess_mb[1] + "\r\n";
+    } 
+                          
+
+    if (fillSt==4) fillSt=2;
+    
+    if (fillSt==3) fillSt=4;
+    if (missFields==missFieldsFormer) { // no pogress
+//        status = status + "*" + fillSt;
+       if (fillSt==2) {backupMat(); outTxt = outTxt + "Backup "; fillSt=3;} //guess
+       guessFl=0; // New Guess if no progress 
+
+
+ //  *********************** find a field (mat[i] where only 2 digits are posible **********************    
+       
+       if (guessFl==0 || ERROR != 0) {
+
+         for (i=0; i<matsz*matsz;i++) {
+           if (mat[i]!=0) {continue;}  //field is not empty
+           ncnt=0;
+           for (y=1; y<matsz+1; y++) {
+             if (mat_mb [i][y]) { guess_mb[ncnt]=y;ncnt++; }   //digit[ncnt]
+           }
+           if (guessFl==0 && (ncnt == 2)) {
+             guess_i= i;
+//             if (digit == 9) digit =2;      //  DETTE ER NOGET SNAVS !!!!!!!! bt_9_7_2010svær.txt
+//             if (digit == 6) digit =2;      //  DETTE ER NOGET SNAVS !!!!!!!! bt_9_7_2010svær.txt
+//             if (digit == 7) digit =3;      //  DETTE ER NOGET SNAVS !!!!!!!!!! sfa131.txt
+//             if (digit == 4) digit =1;      //  DETTE ER NOG      if (x==matsz-1)
+//             document.write("trying to prohibit field:" + i + "  to bee:" + digit + "<br>");
+             mat_mb[i][guess_mb[1]] = false; // action guess last digit is prohibited  
+             outTxt = outTxt + "Gæt" + guess_i + "->" + guess_mb[0] + "\r\n";
+              
+             guessFl=-1;  
+             break;  // 10/10-10 (for i) 
+//             status = status + "G-i" + guess_i + "," + guess_mb[0] + guess_mb[1]; 
+           }  
+         } // for i
+
+       } // if guessFl==0
+
+//       else { clearMat_mb(); restoreMat(); mat_mb[guess_i][guess_mb[1]] = false;          }
+
+       if (guessFl==0){ status = "ERROR3"; contFlg=0; } 
+       document.sudoku.time.value = status;
+    } // if
+    missFieldsFormer=missFields;
+    if (tryl==1) {
+         start = new Date().getTime(); // timestamp now in start
+    } 
+  if (WrCol!=0) outTxt = outTxt  + "\r\n";
+ //   contFlg = 0;
+  } //for tryl
+
+} // function calculate
+
+function clearS() {
+  document.sudoku.myarea.value = "\r\n"; 
+  document.sudoku.time.value ="."; // clear time /status field
+  ERROR=0;                        // No ERROR in a clean sudoku
+  fillSt=0; 
+  initContext();
+  clearMat_mb();
+  printMat();
+} // function clearS
+
+
+
+
+</script>
+<link id="noteanywherecss" media="screen" type="text/css" rel="stylesheet" href="data:text/css,.note-anywhere%20.closebutton%7Bbackground-image%3A%20url%28chrome-extension%3A//bohahkiiknkelflnjjlipnaeapefmjbh/asset/deleteButton.png%29%3B%7D%0A"><meta name="chromesniffer" id="chromesniffer_meta" content="{}"><script type="text/javascript" src="chrome-extension://homgcnaoacgigpkkljjjekpignblkeae/detector.js"></script></head> 
+
+
+<body>
+
+
+<form name="sudoku">
+<input type="text" name="f0" size="1" value=""> <input type="text" name="f1" size="1" value=""> <input type="text" name="f2" size="1" value=""> <input type="text" name="f3" size="1" value=""> <input type="text" name="f4" size="1" value=""> <input type="text" name="f5" size="1" value=""> <input type="text" name="f6" size="1" value=""> <input type="text" name="f7" size="1" value=""> <input type="text" name="f8" size="1" value=""> <br>
+<input type="text" name="f9" size="1" value=""> <input type="text" name="f10" size="1" value=""> <input type="text" name="f11" size="1" value=""> <input type="text" name="f12" size="1" value=""> <input type="text" name="f13" size="1" value=""> <input type="text" name="f14" size="1" value=""> <input type="text" name="f15" size="1" value=""> <input type="text" name="f16" size="1" value=""> <input type="text" name="f17" size="1" value=""> <br>
+<input type="text" name="f18" size="1" value=""> <input type="text" name="f19" size="1" value=""> <input type="text" name="f20" size="1" value=""> <input type="text" name="f21" size="1" value=""> <input type="text" name="f22" size="1" value=""> <input type="text" name="f23" size="1" value=""> <input type="text" name="f24" size="1" value=""> <input type="text" name="f25" size="1" value=""> <input type="text" name="f26" size="1" value=""> <br>
+<input type="text" name="f27" size="1" value=""> <input type="text" name="f28" size="1" value=""> <input type="text" name="f29" size="1" value=""> <input type="text" name="f30" size="1" value=""> <input type="text" name="f31" size="1" value=""> <input type="text" name="f32" size="1" value=""> <input type="text" name="f33" size="1" value=""> <input type="text" name="f34" size="1" value=""> <input type="text" name="f35" size="1" value=""> <br>
+<input type="text" name="f36" size="1" value=""> <input type="text" name="f37" size="1" value=""> <input type="text" name="f38" size="1" value=""> <input type="text" name="f39" size="1" value=""> <input type="text" name="f40" size="1" value=""> <input type="text" name="f41" size="1" value=""> <input type="text" name="f42" size="1" value=""> <input type="text" name="f43" size="1" value=""> <input type="text" name="f44" size="1" value=""> <br>
+<input type="text" name="f45" size="1" value=""> <input type="text" name="f46" size="1" value=""> <input type="text" name="f47" size="1" value=""> <input type="text" name="f48" size="1" value=""> <input type="text" name="f49" size="1" value=""> <input type="text" name="f50" size="1" value=""> <input type="text" name="f51" size="1" value=""> <input type="text" name="f52" size="1" value=""> <input type="text" name="f53" size="1" value=""> <br>
+<input type="text" name="f54" size="1" value=""> <input type="text" name="f55" size="1" value=""> <input type="text" name="f56" size="1" value=""> <input type="text" name="f57" size="1" value=""> <input type="text" name="f58" size="1" value=""> <input type="text" name="f59" size="1" value=""> <input type="text" name="f60" size="1" value=""> <input type="text" name="f61" size="1" value=""> <input type="text" name="f62" size="1" value=""> <br>
+<input type="text" name="f63" size="1" value=""> <input type="text" name="f64" size="1" value=""> <input type="text" name="f65" size="1" value=""> <input type="text" name="f66" size="1" value=""> <input type="text" name="f67" size="1" value=""> <input type="text" name="f68" size="1" value=""> <input type="text" name="f69" size="1" value=""> <input type="text" name="f70" size="1" value=""> <input type="text" name="f71" size="1" value=""> <br>
+<input type="text" name="f72" size="1" value=""> <input type="text" name="f73" size="1" value=""> <input type="text" name="f74" size="1" value=""> <input type="text" name="f75" size="1" value=""> <input type="text" name="f76" size="1" value=""> <input type="text" name="f77" size="1" value=""> <input type="text" name="f78" size="1" value=""> <input type="text" name="f79" size="1" value=""> <input type="text" name="f80" size="1" value=""> <br>
+<textarea name="myarea" cols="40" rows="10"></textarea> <br>
+<input type="button" name="clear" value="Ryd felter" onclick="clearS();">
+<input type="button" name="readPre" value="Hent en sudoku" onclick="readPreSudoku();"><br>
+<input type="button" name="calculate" value="Regn den ud" onclick="calculateS();">Status:<input type="text" name="time" size="45" value="">  
+
+</form>
+
+
+<script language="JavaScript">
+  initContext();
+  clearMat_mb();
+  printMat();
+
+  missFieldsFormer=0;
+</script>
+
+
+</body></html>

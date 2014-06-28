@@ -1,6 +1,6 @@
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<title>Sudoku made with JavaSript and HTML5</title>
+<title>Sudoku med JavaSript og HTML5</title>
 <style type="text/css">
 input.ibk   {text-align:center;
            color:black;
@@ -403,7 +403,7 @@ function calculateS() {
   printMat(); // to clear old form on screen (if any) (not cleared by browser refress button!!!!!)
   if (ERROR != 0) { document.write( "The ERROR in input file Causing sudoku to leave !! #? :-) ...... <br>");  return;   } 
   toDoNum=0; 
-  if (missFields==0){ document.sudoku.time.value ="It took 0 milliseconds"; return;}
+  if (missFields==0){ document.sudoku.time.value ="Det tog 0 millisekunder"; return;}
   start = new Date().getTime(); // timestamp now in start
   contFlg=-1;
   for (tryl=0; (tryl<30 && contFlg!=0); tryl++) {
@@ -427,7 +427,7 @@ function calculateS() {
     if (missFields==0){
       var elapsed = new Date().getTime() - start;
       if (elapsed < 0) elapset+=24*60*60*1000; //if calculating is started just before midtnight
-      document.sudoku.time.value = "It took " + elapsed +  " milliseconds";
+      document.sudoku.time.value = "Det tog " + elapsed +  " millisekunder";
       printMat();
       document.sudoku.myarea.value = outTxt; 
       return; //calculateS()
@@ -441,7 +441,7 @@ function calculateS() {
       mat_mb[guess_i][guess_mb[0]] = false;
       ERROR = 0;
       guessFl = 0; // 10/10-10
-      outTxt = outTxt + "No " + guess_i + "->" + guess_mb[1] + "\r\n";
+      outTxt = outTxt + "Nej " + guess_i + "->" + guess_mb[1] + "\r\n";
     } 
                           
 
@@ -467,7 +467,7 @@ function calculateS() {
            if (guessFl==0 && (ncnt == 2)) {
              guess_i= i;
              mat_mb[i][guess_mb[1]] = false; // action guess last digit is prohibited  
-             outTxt = outTxt + "Guess" + guess_i + "->" + guess_mb[0] + "\r\n";
+             outTxt = outTxt + "Gæt " + guess_i + "->" + guess_mb[0] + "\r\n";
               
              guessFl=-1;  
              break;  // 10/10-10 (for i) 
@@ -525,7 +525,7 @@ calculateS();
 
 </script>
 
-Version 4.00 english<br>
+Version 4.00 dansk<br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">
@@ -622,11 +622,11 @@ Version 4.00 english<br>
 
 </p>
 <textarea name="myarea" cols="50" rows="6"></textarea> <br>
-<input type="button" name="clear" value="Clear" onclick="clearS();">
-<input type="button" name="readPre" value="Get one sudoku" onclick="readPreSudoku();"> 
+<input type="button" name="clear" value="Slet " onclick="clearS();">
+<input type="button" name="readPre" value="Hent en sudoku" onclick="readPreSudoku();"> 
 <input type="button" name="auto" value="auto" onclick="autof();"> 
 <br>
-<input type="button" name="calculate" value="Calculate it!" onclick="calculateS();">Status:<input type="text" name="time" size="45" value="">  
+<input type="button" name="calculate" value="Udregn den" onclick="calculateS();">Status:<input type="text" name="time" size="45" value="">  
 
 </form>
 

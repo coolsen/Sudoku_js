@@ -6,17 +6,17 @@ input.ibk   {text-align:center;
            color:black;
            height:40px;
            width:40px;
-           font-size:150%}
+           font-size:200%}
 input.ibl  {text-align:center;
            color:blue;
            height:40px;
            width:40px;
-           font-size:150%}
+           font-size:200%}
 input.ird  {text-align:center;
            color:red;
            height:40px;
            width:40px;
-           font-size:150%}
+           font-size:200%}
 p.s       {letter-spacing:18px;}
 </style>
  
@@ -335,6 +335,8 @@ function restoreMat() {
 //      readInSudoku();
 fillSt=oldfillSt;
 } // function
+
+
 function readPreSudoku() { // read predefined sudoko
   var s= "\r\n"; 
   initContext();
@@ -392,14 +394,18 @@ printMat();
 
 function calculateS() {
   status= ".";
-  outTxt = "."; //\r\n
+  outTxt = ""; //\r\n
 //  status= status + strNo;
   guessFl=0; 
   readInSudoku();
   if (ERROR!=0) {document.sudoku.time.value ="ERROR1"; return;}
   missFields=queryMat(); 
-  if (missFields>81-22) {document.sudoku.time.value ="ERROR2"; return;}
-
+  if (missFields>81-15) {  // if less than 15 fields are given we cannot calculate it (it was 22 in v4.00 )
+	document.sudoku.time.value ="ERROR2";
+	printMat();document.sudoku.myarea.value = outTxt;
+	  return;
+  } 
+  document.sudoku.time.value =""; 
   printMat(); // to clear old form on screen (if any) (not cleared by browser refress button!!!!!)
   if (ERROR != 0) { document.write( "The ERROR in input file Causing sudoku to leave !! #? :-) ...... <br>");  return;   } 
   toDoNum=0; 
@@ -477,7 +483,7 @@ function calculateS() {
        } // if guessFl==0
 
 
-       if (guessFl==0){ status = "ERROR3"; contFlg=0; } 
+       if (guessFl==0){ status = "ERROR3";printMat(); ERROR=3; contFlg=0; } 
        document.sudoku.time.value = status;
     } // if
     missFieldsFormer=missFields;
@@ -509,6 +515,9 @@ readPreSudoku();
 calculateS();
 }
 }
+
+
+
 </script>
 </head>
 
@@ -525,7 +534,7 @@ calculateS();
 
 </script>
 
-Version 4.00 english<br>
+Version 5.00 english<br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">

@@ -336,9 +336,83 @@ function restoreMat() {
 fillSt=oldfillSt;
 } // function
 
+function readTxtS() {  // read sudoku from textinput to Matrix
+  var x,ch,s= "\r\n";
 
-function readPreSudoku() { // read predefined sudoko
-  var s= "\r\n"; 
+  initContext();
+  fillSt=0;
+  clearMat_mb();
+   document.sudoku.time.value =""; // clear time /status field
+  ERROR=0;  fillSt=1;
+  x = document.getElementById("textinput").value;
+  for (var i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
+      ch = x.substring(i,(i+1)); // ch is a String (one letter)
+      
+      if ((ch == " ") || (ch == "0") || (ch == ".")) ;
+      else { //else ch                 // only fill in if digit
+
+         if (!( (ch == "1") || (ch == "2") || (ch == "3") || (ch == "4") ||(ch == "5") ||
+                   (ch == "6") || (ch == "7") ||(ch == "8") || (ch == "9")   )) continue ;
+         digit = +ch;  // digit is int
+         if (writeMat( i, digit , fillSt)!= 0) {
+            s += "Error imposible to fill in field:" + i + "(" + (i%matsz) + "," + (i/matsz) + ")" + "->" 
+            + digit +"\n" ;
+            ERROR=1;
+         }//if
+    
+      } //else ch
+  } //for
+ 
+document.sudoku.myarea.value = s;
+//strNo++;
+//if (strNo >5 ) strNo =0;
+printMat();
+
+} // function readTxtS();
+
+function writeTxtS() {  // write sudoku from DOM to textout (Also DOM) 
+  var x,ch,s= "\r\n";
+
+  outStr="";
+  for (var i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
+
+    if (mat[i] == 0) ch = ".";
+    else ch = mat[i]; 
+
+
+    outStr += ch;
+
+
+/*      ch = x.substring(i,(i+1)); // ch is a String (one letter)
+      
+      if ((ch == " ") || (ch == "0") || (ch == ".")) ;
+      else { //else ch                 // only fill in if digit
+
+         if (!( (ch == "1") || (ch == "2") || (ch == "3") || (ch == "4") ||(ch == "5") ||
+                   (ch == "6") || (ch == "7") ||(ch == "8") || (ch == "9")   )) continue ;
+         digit = +ch;  // digit is int
+         if (writeMat( i, digit , fillSt)!= 0) {
+            s += "Error imposible to fill in field:" + i + "(" + (i%matsz) + "," + (i/matsz) + ")" + "->" 
+            + digit +"\n" ;
+            ERROR=1;
+         }//if
+    
+      } //else ch
+*/
+  } //for
+
+
+outStr += "\r\n";
+
+ document.getElementById("textoutput").value = outStr;
+ 
+//document.sudoku.textout.value = outStr;
+} // function readTxtS();
+
+
+function readPreSudoku() { // read predefined sudoku
+  var ch,s= "\r\n";
+
   initContext();
   fillSt=0;
   clearMat_mb();
@@ -492,7 +566,8 @@ function calculateS() {
     } 
   if (WrCol!=0) outTxt = outTxt  + "\r\n.";
   } //for tryl
-
+printMat(); // 2016
+document.sudoku.time.value = status; //2016
 } // function calculate
 
 function clearS() {
@@ -534,7 +609,7 @@ calculateS();
 
 </script>
 
-Version 5.00 english<br>
+Version 5.02 english<br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">
@@ -630,6 +705,13 @@ Version 5.00 english<br>
 
 
 </p>
+<textarea id="textinput" name="textinput" cols="85" rows="2">200370009009200007001004002050000800008000900006000040900100500800007600400089001</textarea>
+<input type="button" name="readTxt" value="ReadTxt" onclick="readTxtS();"> <br> 
+<textarea id="textoutput" name="textoutput" cols="85" rows="2"></textarea>
+<input type="button" name="writeTxt" value="GetTxtOutput" onclick="writeTxtS();">
+ <br>  
+
+
 <textarea name="myarea" cols="50" rows="6"></textarea> <br>
 <input type="button" name="clear" value="Clear" onclick="clearS();">
 <input type="button" name="readPre" value="Get one sudoku" onclick="readPreSudoku();"> 

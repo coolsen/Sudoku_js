@@ -364,9 +364,10 @@ function readTxtS() {  // read sudoku from textinput to Matrix
   } //for
  
 document.sudoku.myarea.value = s;
-//strNo++;
-//if (strNo >5 ) strNo =0;
 printMat();
+var len = x.length +1;
+x = x.substring(82,(len)); // cut first 82 char of string x
+document.getElementById("textinput").value = x;
 
 } // function readTxtS();
 
@@ -586,7 +587,7 @@ calculateS();
 
 </script>
 
-Version 5.03 english<br>
+Version 5.04 english<br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">

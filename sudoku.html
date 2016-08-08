@@ -6,17 +6,17 @@ input.ibk   {text-align:center;
            color:black;
            height:40px;
            width:40px;
-           font-size:150%}
+           font-size:200%}
 input.ibl  {text-align:center;
            color:blue;
            height:40px;
            width:40px;
-           font-size:150%}
+           font-size:200%}
 input.ird  {text-align:center;
            color:red;
            height:40px;
            width:40px;
-           font-size:150%}
+           font-size:200%}
 p.s       {letter-spacing:18px;}
 </style>
  
@@ -335,8 +335,75 @@ function restoreMat() {
 //      readInSudoku();
 fillSt=oldfillSt;
 } // function
-function readPreSudoku() { // read predefined sudoko
-  var s= "\r\n"; 
+
+function readCalcA() {
+for (  ;   ;   ) {
+     if (readTxtS() != 0) break;
+     writeTxtS();
+     calculateS();
+     }
+
+} // function
+
+
+function readTxtS() {  // read sudoku from textinput to Matrix
+  var x,ch,s= "\r\n";
+
+  initContext();
+  fillSt=0;
+  clearMat_mb();
+   document.sudoku.time.value =""; // clear time /status field
+  ERROR=0;  fillSt=1;
+  x = document.getElementById("textinput").value;
+  if (x.length < 81 ) {
+        x = "";
+        return 1;
+       }
+  for (var i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
+      ch = x.substring(i,(i+1)); // ch is a String (one letter)
+      
+      if ((ch == " ") || (ch == "0") || (ch == ".")) ;
+      else { //else ch                 // only fill in if digit
+
+         if (!( (ch == "1") || (ch == "2") || (ch == "3") || (ch == "4") ||(ch == "5") ||
+                   (ch == "6") || (ch == "7") ||(ch == "8") || (ch == "9")   )) continue ;
+         digit = +ch;  // digit is int
+         if (writeMat( i, digit , fillSt)!= 0) {
+            s += "Error imposible to fill in field:" + i + "(" + (i%matsz) + "," + (i/matsz) + ")" + "->" 
+            + digit +"\n" ;
+            ERROR=1;
+         }//if
+    
+      } //else ch
+  } //for
+ 
+document.sudoku.myarea.value = s;
+printMat();
+var len = x.length +1;
+x = x.substring(82,(len)); // cut first 82 char of string x
+document.getElementById("textinput").value = x;
+return 0;
+} // function readTxtS();
+
+function writeTxtS() {  // write sudoku from DOM to textout (Also DOM) 
+  var x,ch;
+  var outStr="";
+
+  for (var i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
+    if (mat[i] == 0) ch = ".";
+    else ch = mat[i]; 
+    outStr += ch;
+  } //for
+outStr += "\r\n";
+document.getElementById("textoutput").value += outStr;
+ 
+//document.sudoku.textout.value = outStr;
+} // function writeTxtS();
+
+
+function readPreSudoku() { // read predefined sudoku
+  var ch,s= "\r\n";
+
   initContext();
   fillSt=0;
   clearMat_mb();
@@ -392,14 +459,18 @@ printMat();
 
 function calculateS() {
   status= ".";
-  outTxt = "."; //\r\n
+  outTxt = ""; //\r\n
 //  status= status + strNo;
   guessFl=0; 
   readInSudoku();
   if (ERROR!=0) {document.sudoku.time.value ="ERROR1"; return;}
   missFields=queryMat(); 
-  if (missFields>81-22) {document.sudoku.time.value ="ERROR2"; return;}
-
+  if (missFields>81-15) {  // if less than 15 fields are given we cannot calculate it (it was 22 in v4.00 )
+	document.sudoku.time.value ="ERROR2";
+	printMat();document.sudoku.myarea.value = outTxt;
+	  return;
+  } 
+  document.sudoku.time.value =""; 
   printMat(); // to clear old form on screen (if any) (not cleared by browser refress button!!!!!)
   if (ERROR != 0) { document.write( "The ERROR in input file Causing sudoku to leave !! #? :-) ...... <br>");  return;   } 
   toDoNum=0; 
@@ -429,6 +500,7 @@ function calculateS() {
       if (elapsed < 0) elapset+=24*60*60*1000; //if calculating is started just before midtnight
       document.sudoku.time.value = "Det tog " + elapsed +  " millisekunder";
       printMat();
+      writeTxtS();
       document.sudoku.myarea.value = outTxt; 
       return; //calculateS()
     }  
@@ -477,7 +549,7 @@ function calculateS() {
        } // if guessFl==0
 
 
-       if (guessFl==0){ status = "ERROR3"; contFlg=0; } 
+       if (guessFl==0){ status = "ERROR3";printMat(); ERROR=3; contFlg=0; } 
        document.sudoku.time.value = status;
     } // if
     missFieldsFormer=missFields;
@@ -486,7 +558,8 @@ function calculateS() {
     } 
   if (WrCol!=0) outTxt = outTxt  + "\r\n.";
   } //for tryl
-
+printMat(); // 2016
+document.sudoku.time.value = status; //2016
 } // function calculate
 
 function clearS() {
@@ -509,6 +582,9 @@ readPreSudoku();
 calculateS();
 }
 }
+
+
+
 </script>
 </head>
 
@@ -525,7 +601,7 @@ calculateS();
 
 </script>
 
-Version 4.00 dansk<br>
+Version 5.05 dansk<br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">
@@ -621,6 +697,14 @@ Version 4.00 dansk<br>
 
 
 </p>
+<textarea id="textinput" name="textinput" cols="85" rows="2"></textarea> <br>
+<input type="button" name="readTxt" value="Indlæs Text" onclick="readTxtS();">  <input type="button" name="readCalc" value="Læs og udregn Alle" onclick="readCalcA();"> 
+<br><br> 
+<textarea id="textoutput" name="textoutput" cols="85" rows="2"></textarea> <br>
+<input type="button" name="writeTxt" value="Hent Text Løsningen" onclick="writeTxtS();">
+ <br><br>  
+
+
 <textarea name="myarea" cols="50" rows="6"></textarea> <br>
 <input type="button" name="clear" value="Slet " onclick="clearS();">
 <input type="button" name="readPre" value="Hent en sudoku" onclick="readPreSudoku();"> 

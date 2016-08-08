@@ -336,6 +336,16 @@ function restoreMat() {
 fillSt=oldfillSt;
 } // function
 
+function readCalcA() {
+for (  ;   ;   ) {
+     if (readTxtS() != 0) break;
+     writeTxtS();
+     calculateS();
+     }
+
+} // function
+
+
 function readTxtS() {  // read sudoku from textinput to Matrix
   var x,ch,s= "\r\n";
 
@@ -345,6 +355,10 @@ function readTxtS() {  // read sudoku from textinput to Matrix
    document.sudoku.time.value =""; // clear time /status field
   ERROR=0;  fillSt=1;
   x = document.getElementById("textinput").value;
+  if (x.length < 81 ) {
+        x = "";
+        return 1;
+       }
   for (var i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
       ch = x.substring(i,(i+1)); // ch is a String (one letter)
       
@@ -368,7 +382,7 @@ printMat();
 var len = x.length +1;
 x = x.substring(82,(len)); // cut first 82 char of string x
 document.getElementById("textinput").value = x;
-
+return 0;
 } // function readTxtS();
 
 function writeTxtS() {  // write sudoku from DOM to textout (Also DOM) 
@@ -587,7 +601,7 @@ calculateS();
 
 </script>
 
-Version 5.04 english<br>
+Version 5.05 english<br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">
@@ -683,11 +697,12 @@ Version 5.04 english<br>
 
 
 </p>
-<textarea id="textinput" name="textinput" cols="85" rows="2">200370009009200007001004002050000800008000900006000040900100500800007600400089001</textarea>
-<input type="button" name="readTxt" value="ReadTxt" onclick="readTxtS();"> <br> 
-<textarea id="textoutput" name="textoutput" cols="85" rows="2"></textarea>
+<textarea id="textinput" name="textinput" cols="85" rows="2"></textarea> <br>
+<input type="button" name="readTxt" value="ReadTxt" onclick="readTxtS();">  <input type="button" name="readCalc" value="ReadCalcAll" onclick="readCalcA();"> 
+<br><br> 
+<textarea id="textoutput" name="textoutput" cols="85" rows="2"></textarea> <br>
 <input type="button" name="writeTxt" value="GetTxtOutput" onclick="writeTxtS();">
- <br>  
+ <br><br>  
 
 
 <textarea name="myarea" cols="50" rows="6"></textarea> <br>

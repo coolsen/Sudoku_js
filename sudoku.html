@@ -371,43 +371,19 @@ printMat();
 } // function readTxtS();
 
 function writeTxtS() {  // write sudoku from DOM to textout (Also DOM) 
-  var x,ch,s= "\r\n";
+  var x,ch;
+  var outStr="";
 
-  outStr="";
   for (var i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
-
     if (mat[i] == 0) ch = ".";
     else ch = mat[i]; 
-
-
     outStr += ch;
-
-
-/*      ch = x.substring(i,(i+1)); // ch is a String (one letter)
-      
-      if ((ch == " ") || (ch == "0") || (ch == ".")) ;
-      else { //else ch                 // only fill in if digit
-
-         if (!( (ch == "1") || (ch == "2") || (ch == "3") || (ch == "4") ||(ch == "5") ||
-                   (ch == "6") || (ch == "7") ||(ch == "8") || (ch == "9")   )) continue ;
-         digit = +ch;  // digit is int
-         if (writeMat( i, digit , fillSt)!= 0) {
-            s += "Error imposible to fill in field:" + i + "(" + (i%matsz) + "," + (i/matsz) + ")" + "->" 
-            + digit +"\n" ;
-            ERROR=1;
-         }//if
-    
-      } //else ch
-*/
   } //for
-
-
 outStr += "\r\n";
-
- document.getElementById("textoutput").value = outStr;
+document.getElementById("textoutput").value += outStr;
  
 //document.sudoku.textout.value = outStr;
-} // function readTxtS();
+} // function writeTxtS();
 
 
 function readPreSudoku() { // read predefined sudoku
@@ -509,6 +485,7 @@ function calculateS() {
       if (elapsed < 0) elapset+=24*60*60*1000; //if calculating is started just before midtnight
       document.sudoku.time.value = "It took " + elapsed +  " milliseconds";
       printMat();
+      writeTxtS();
       document.sudoku.myarea.value = outTxt; 
       return; //calculateS()
     }  
@@ -609,7 +586,7 @@ calculateS();
 
 </script>
 
-Version 5.02 english<br>
+Version 5.03 english<br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">

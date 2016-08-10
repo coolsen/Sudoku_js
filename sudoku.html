@@ -1,19 +1,24 @@
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<title>Sudoku made with JavaSript and HTML5</title>
+<title>JS (html5) Sudoku</title>
 <style type="text/css">
 input.ibk   {text-align:center;
-           color:black;
+           color:black;background:#FEE;
            height:40px;
            width:40px;
            font-size:200%}
 input.ibl  {text-align:center;
-           color:blue;
+	   color:#00f;background:#FFF;
            height:40px;
            width:40px;
            font-size:200%}
 input.ird  {text-align:center;
            color:red;
+           height:40px;
+           width:40px;
+           font-size:200%}
+input.igr  {text-align:center;
+           color:#0f0;
            height:40px;
            width:40px;
            font-size:200%}
@@ -226,19 +231,28 @@ for (i=0; i<matsz*matsz; i++) {
   if (i != 0 && i % 9 == 0) gs += "<br>\n";
   if (mat_co[i] == 0) colorString = "ibk";
   if (mat_co[i] == 1) colorString = "ibl";
-  if (mat_co[i] == 2) colorString = "ird";
+  if (mat_co[i] == 2) colorString = "ird"; //2016
+  if (mat_co[i] == 3) colorString = "igr"; //2016
+
   gs += '<input type="text" name="f' + i + '" class="' + colorString + '" value= "' + ch + '"  >\n';
 } // for
 document.getElementById("inputField").innerHTML = gs; 
 }  
 
-function writeMat( index, number, fst) {
+function writeMat( index, number, fst) { 
 
-if (mat_mb [index][number]  == true ) { mat[index] = number; mat_st[index] = fst; if(fst >= 2) mat_co[index] = 1;}                // fill in sudoku       
+if (mat_mb [index][number]  == true ) { // fill in sudoku  
+    mat[index] = number; 
+    mat_st[index] = fst;
+    if(fst == 2) mat_co[index] = 1; //blue
+    if(fst == 3) mat_co[index] = 2; //red 2016
+    if(fst == 4) mat_co[index] = 3; //green 2016
+
+    }                 
 else {
-  if (mat[index] == number) return 1; // if we are trying to set in same number as already in it's OK
-  else return 2;
-}
+    if (mat[index] == number) return 1; // if we are trying to set in same number as already in it's OK
+    else return 2;
+    }
 var crn = mat_rn[index];var ccn = mat_cn[index];var ckn = mat_kn[index];
 var y=0;
 // mat_mb[row [crn][0]][0]
@@ -490,7 +504,8 @@ function calculateS() {
        i=toDoField[tdi]; digit=toDoDigit[tdi];
        ret = writeMat( i, digit , fillSt);
        if (ret==2) {ERROR=-1; }
-       if (ret==0) {outTxt +=  i + "->" + digit + " "; WrCol++; if (WrCol % 8==0) { outTxt = outTxt + "\r\n"; WrCol=0} }
+//       if (ret==0) {outTxt +=  i + "->" + digit + " "; WrCol++; if (WrCol % 8==0) { outTxt = outTxt + "\r\n"; WrCol=0} }
+       if (ret==0) {outTxt +=  digit + "->" + i + " "; WrCol++; if (WrCol % 8==0) { outTxt = outTxt + "\r\n"; WrCol=0} } //2016
 
     } //for TDI
     missFields=queryMat();
@@ -508,12 +523,15 @@ function calculateS() {
     if ((guessFl != 0) && (ERROR != 0)) { 
       clearMat_mb();
       restoreMat();
-      outTxt = outTxt + "Restore ";
+      outTxt +=  "Restore ";
 
-      mat_mb[guess_i][guess_mb[0]] = false;
+      var right_guess = guess_mb[1];          //2016
+      writeMat( guess_i, right_guess , 3); //2016
+      mat_mb[guess_i][guess_mb[0]] = false;  //set mat[i][wrong guess]
       ERROR = 0;
       guessFl = 0; // 10/10-10
-      outTxt = outTxt + "No " + guess_i + "->" + guess_mb[1] + "\r\n";
+//      outTxt = outTxt + "No " + guess_i + "->" + guess_mb[1] + "\r\n"; // comentet out 2016
+      outTxt = outTxt + "No " + guess_mb[1] + "->" + guess_i + "\r\n"; // comentet out 2016
     } 
                           
 
@@ -522,7 +540,11 @@ function calculateS() {
     if (fillSt==3) fillSt=4;
     if (missFields==missFieldsFormer) { // no pogress
 //        status = status + "*" + fillSt;
-       if (fillSt==2) {backupMat(); outTxt = outTxt + "Backup "; fillSt=3;} //guess
+       if (fillSt==2) {//guess 2016
+	   backupMat();  //2016
+	   outTxt +=  "Backup "; //2016
+           fillSt=3; //2016 guess=3
+           } 	
        guessFl=0; // New Guess if no progress 
 
 
@@ -539,7 +561,8 @@ function calculateS() {
            if (guessFl==0 && (ncnt == 2)) {
              guess_i= i;
              mat_mb[i][guess_mb[1]] = false; // action guess last digit is prohibited  
-             outTxt = outTxt + "Guess" + guess_i + "->" + guess_mb[0] + "\r\n";
+//             outTxt = outTxt + "Guess" + guess_i + "->" + guess_mb[0] + "\r\n";
+             outTxt = outTxt + "Guess " + guess_mb[0] + "->" + guess_i + "\r\n";
               
              guessFl=-1;  
              break;  // 10/10-10 (for i) 
@@ -559,6 +582,9 @@ function calculateS() {
   if (WrCol!=0) outTxt = outTxt  + "\r\n.";
   } //for tryl
 printMat(); // 2016
+status = "ERROR4"; //2016
+ERROR=4; //2016
+document.sudoku.myarea.value = outTxt; //2016 
 document.sudoku.time.value = status; //2016
 } // function calculate
 
@@ -601,7 +627,7 @@ calculateS();
 
 </script>
 
-Version 5.05 english<br>
+Version 5.06 english<br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">

@@ -3,26 +3,26 @@
 <title>JS Sudoku (html5)</title>
 <style type="text/css">
 input.ibk   {text-align:center;
-           color:black;background:#FEE;
-           height:40px;
-           width:40px;
-           font-size:200%}
+	color:black;background:#FEE;
+	height:40px;
+	width:40px;
+	font-size:200%}
 input.ibl  {text-align:center;
-	   color:#00f;background:#FFF;
-           height:40px;
-           width:40px;
-           font-size:200%}
+	color:#00f;background:#FFF;
+	height:40px;
+	width:40px;
+	font-size:200%}
 input.ird  {text-align:center;
-           color:red;
-           height:40px;
-           width:40px;
-           font-size:200%}
+	color:red;
+	height:40px;
+	width:40px;
+	font-size:200%}
 input.igr  {text-align:center;
-           color:#0f0;
-           height:40px;
-           width:40px;
-           font-size:200%}
-p.s       {letter-spacing:18px;}
+	color:#0f0;
+	height:40px;
+	width:40px;
+	font-size:200%}
+p.s	{letter-spacing:18px;}
 </style>
  
 <script>
@@ -39,7 +39,7 @@ var row = new Array(matsz); for (i=0; i <matsz; i++) row[i]=new Array(matsz);  /
 var col = new Array(matsz); for (i=0; i <matsz; i++) col[i]=new Array(matsz);
 var kvad = new Array(matsz); for (i=0; i <matsz; i++) kvad[i]=new Array(matsz);
 var mat_mb = new Array((matsz+1)*(matsz+1)); for (i=0; i <((matsz+1)*(matsz+1)); i++) mat_mb[i]=new Array(matsz+1+1);
-var start,elapsed,flt,outTxt;
+var start,elapsed,flt,outTxt, g_str = "";
  var ERROR =0; contFlg=-1;
    digit=0;  toDoNum=0; tryl=0; tdi=0; contFlg=-1; missFields=20; missFieldsFormer=0; fillSt=1; guessFl=0;
   var   guess_i=0;
@@ -222,7 +222,7 @@ gs = document.getElementById("inputField").innerHTML;
 gs = "";
 
 for (i=0; i<matsz*matsz; i++) {
-  if (mat[i] == 0) ch = " ";
+	if (mat[i] == 0) ch = " ";
   else ch = mat[i]; 
 
   if (i != 0 && i % 3 == 0) gs += ":    :";
@@ -360,7 +360,7 @@ for (  ;   ;   ) {
 } // function
 
 
-function readTxtS() {  // read sudoku from textinput to Matrix
+function readTxtS() {  // read sudoku from textinput to Matrix4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......
   var x,ch,s= "\r\n";
 
   initContext();
@@ -416,30 +416,23 @@ document.getElementById("textoutput").value += outStr;
 
 
 function readPreSudoku() { // read predefined sudoku
-  var ch,s= "\r\n";
-
-  initContext();
-  fillSt=0;
-  clearMat_mb();
-   document.sudoku.time.value =""; // clear time /status field
-  ERROR=0;  fillSt=1;
-  for (i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
-      ch = strContent[strNo].substring(i,(i+1)); // ch is a String (one letter)
-      if (ch == " ") ;
-      else { //else ch                 // only fill in if digit
-         digit = +ch;  // digit is int
-         if (writeMat( i, digit , fillSt)!= 0) {
-            s += "Error imposible to fill in field:" + i + "(" + (i%matsz) + "," + (i/matsz) + ")" + "->" 
-            + digit +"\n" ;
-            ERROR=1;
-         }//if
-    
-      } //else ch
-  } //for
-
-
-// for (i=0; i < 81; i++) s += "mat[" + i + "] = " + mat[i] + "\n";
- 
+var ch,s= "\r\n";
+initContext();
+fillSt=0;
+clearMat_mb();
+document.sudoku.time.value =""; // clear time /status field
+ERROR=0;  fillSt=1;
+for (i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
+	ch = strContent[strNo].substring(i,(i+1)); // ch is a String (one letter)
+	if (ch == " ") ;
+	else { //else ch                 // only fill in if digit
+		digit = +ch;  // digit is int
+		if (writeMat( i, digit , fillSt)!= 0) {
+			s += "Error imposible to fill in field:" + i + "(" + (i%matsz) + "," + (i/matsz) + ")" + "->" + digit +"\n" ;
+			ERROR=1;
+			}//if
+    		} //else ch
+	} //for
 document.sudoku.myarea.value = s;
 strNo++;
 if (strNo >5 ) strNo =0;
@@ -447,148 +440,161 @@ printMat();
 } // function
 
 function readInSudoku() { 
-  document.sudoku.time.value =""; // clear time /status field
-  ERROR=0;
-  initContext();
-  fillSt=0;
-  clearMat_mb();
-  inForm();
-  fillSt=1;
-  for (i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
-    ch=javaInform[i]; 
-    if ((ch == " ") || (ch =="")) mat[i] =0;
-    else {                  // only fill in if digit
-       digit = +ch;  // digit is int
-
-       if (writeMat( i, digit , fillSt)!= 0) {
-         ERROR=1;
-         break;
-       }//if
-
-    } //else
-  } //for
+document.sudoku.time.value =""; // clear time /status field
+ERROR=0;
+initContext();
+fillSt=0;
+clearMat_mb();
+inForm();
+fillSt=1;
+for (i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
+	ch=javaInform[i];
+	if ((ch == " ") || (ch =="")) mat[i] =0;
+	else {        // only fill in if digit
+		digit = +ch;  // digit is int
+		if (writeMat( i, digit , fillSt)!= 0) {
+			ERROR=1;
+			break;
+			}//if
+		} //else
+	} //for
 printMat();
 } // function
 
-
 function calculateS() {
-status= ".";
-outTxt = ""; //\r\n
+  status= ".";
+  outTxt = ""; //\r\n
 //  status= status + strNo;
-guessFl=0; 
-readInSudoku();
-if (ERROR!=0) {
-	document.sudoku.time.value ="ERROR1";
-	 return;
-	}
-missFields=queryMat(); 
-if (missFields>81-15) {  // if less than 15 fields are given we cannot calculate it (it was 22 in v4.00 )
+  guessFl=0; 
+  readInSudoku();
+  if (ERROR!=0) {document.sudoku.time.value ="ERROR1"; return;}
+  missFields=queryMat(); 
+  if (missFields>81-15) {  // if less than 15 fields are given we cannot calculate it (it was 22 in v4.00 )
 	document.sudoku.time.value ="ERROR2";
 	printMat();document.sudoku.myarea.value = outTxt;
-	return;
-	} 
-document.sudoku.time.value =""; 
-printMat(); // to clear old form on screen (if any) (not cleared by browser refress button!!!!!)
-if (ERROR != 0) {
-	document.write( "The ERROR in input file Causing sudoku to leave !! #? :-) ...... <br>");
-	return;
-	} 
-toDoNum=0; 
-if (missFields==0){ 
-	document.sudoku.time.value ="It took 0 milliseconds";
-	return;
-	}
-start = new Date().getTime(); // timestamp now in start
-contFlg=-1;
-for (var tryl=0; (tryl<50 && contFlg!=0); tryl++) {
-	toDoNum=0;
-	FindSafeMoves();
+	  return;
+  } 
+  document.sudoku.time.value =""; 
+  printMat(); // to clear old form on screen (if any) (not cleared by browser refress button!!!!!)
+  if (ERROR != 0) { document.write( "The ERROR in input file Causing sudoku to leave !! #? :-) ...... <br>");  return;   } 
+  toDoNum=0; 
+  if (missFields==0){ document.sudoku.time.value ="Det tog 0 millisekunder"; return;}
+  start = new Date().getTime(); // timestamp now in start
+  contFlg=-1;
+  for (tryl=0; (tryl<30 && contFlg!=0); tryl++) {
+    toDoNum=0;
 
-//	TDI 1***************** insert Digits from toDo in mat[] (and set mat_mb[] correct) ****************    
-	tdi=0;
-	if (fillSt==1)fillSt++;
-	WrCol=0; 
-	for (tdi=0; tdi<toDoNum; tdi++ ) {
-		i=toDoField[tdi]; digit=toDoDigit[tdi];
-		ret = writeMat( i, digit , fillSt);
-		if (ret==2) ERROR=-1;
-		if (ret==0) {
-			outTxt +=  digit + "->" + i + " ";
-			WrCol++;
-			if (WrCol % 8==0){
-				outTxt = outTxt + "\r\n";
-				WrCol=0;
-				}
-			} //2016
-		} //for TDI
-	missFields=queryMat();
-	if (missFields!=0) contFlg=-1;
-	if (missFields==0){
-		var elapsed = new Date().getTime() - start;
-		if (elapsed < 0) elapset+=24*60*60*1000; //if calculating is started just before midtnight
-		document.sudoku.time.value = "It took " + elapsed +  " milliseconds";
-		printMat();
-		writeTxtS();
-		document.sudoku.myarea.value = outTxt; 
-		return; //calculateS()
-		}  
-	if ((guessFl != 0) && (ERROR != 0)) { // 2010
-//      12                 2      23                  3    3                                              32 1
-//    	if ((guessFl != 0) && ((ERROR != 0)  || (missFields==missFieldsFormer)) ) { // 2016
-		clearMat_mb();
-		restoreMat();
-		outTxt +=  "Restore ";
+    FindSafeMoves();
 
-		var right_guess = guess_mb[1];          //2016
-		writeMat( guess_i, right_guess , 3); //2016
-		mat_mb[guess_i][guess_mb[0]] = false;  //set mat[i][wrong guess]
-		ERROR = 0;
-		guessFl = 0; // 10/10-10
-		outTxt = outTxt + "No " + guess_mb[1] + "->" + guess_i + "\r\n";
-		} 
-	if (fillSt==4) fillSt=2;
-    	if (fillSt==3) fillSt=4;
-	if (missFields==missFieldsFormer) { // no pogress
-//	status = status + "*" + fillSt;
-	if (fillSt==2) {//guess 2016
-		backupMat();  //2016
-		outTxt +=  "Backup "; //2016
-		fillSt=3; //2016 guess=3
-		} 	
-	guessFl=0; // New Guess if no progress 
+//  TDI 1***************** insert Digits from toDo in mat[] (and set mat_mb[] correct) ****************    
+    tdi=0;
+    if (fillSt==1)fillSt++;
+    WrCol=0; 
+    for (tdi=0; tdi<toDoNum; tdi++ ) {
+       i=toDoField[tdi]; digit=toDoDigit[tdi];
+       ret = writeMat( i, digit , fillSt);
+       if (ret==2) {ERROR=-1; }
+//       if (ret==0) {outTxt +=  i + "->" + digit + " "; WrCol++; if (WrCol % 8==0) { outTxt = outTxt + "\r\n"; WrCol=0} }
+       if (ret==0) {outTxt +=  digit + "->" + i + " "; WrCol++; if (WrCol % 8==0) { outTxt = outTxt + "\r\n"; WrCol=0} } //2016
+
+    } //for TDI
+    missFields=queryMat();
+    if (missFields!=0) contFlg=-1;
+    if (missFields==0){
+      var elapsed = new Date().getTime() - start;
+      if (elapsed < 0) elapset+=24*60*60*1000; //if calculating is started just before midtnight
+      document.sudoku.time.value = "Det tog " + elapsed +  " millisekunder";
+      printMat();
+      writeTxtS();
+      document.sudoku.myarea.value = outTxt; 
+      return; //calculateS()
+    }  
+
+    if ((guessFl != 0) && (ERROR != 0)) { 
+      clearMat_mb();
+      restoreMat();
+      outTxt +=  "Restore ";
+
+      var right_guess = guess_mb[1];          //2016
+      writeMat( guess_i, right_guess , 3); //2016
+      mat_mb[guess_i][guess_mb[0]] = false;  //set mat[i][wrong guess]
+      ERROR = 0;
+      guessFl = 0; // 10/10-10
+
+//      outTxt = outTxt + "No " + guess_i + "->" + guess_mb[1] + "\r\n"; // comentet out 2016
+      outTxt = outTxt + "Nej " + guess_mb[1] + "->" + guess_i + "\r\n"; // comentet out 2016
+
+    } 
+                          
+
+    if (fillSt==4) fillSt=2;
+    
+    if (fillSt==3) fillSt=4;
+    if (missFields==missFieldsFormer) { // no pogress
+//        status = status + "*" + fillSt;
+       if (fillSt==2) {//guess 2016
+	   backupMat();  //2016
+	   outTxt +=  "Backup "; //2016
+           fillSt=3; //2016 guess=3
+           } 	
+       guessFl=0; // New Guess if no progress 
+
 
  //  *********************** find a field (mat[i] where only 2 digits are posible **********************    
-	if (guessFl==0 || ERROR != 0) {
-		for (i=0; i<matsz*matsz;i++) {
-			if (mat[i]!=0) continue;  //field is not empty
-			ncnt=0;
-			for (y=1; y<matsz+1; y++) {
-				if (mat_mb [i][y]) {
-					guess_mb[ncnt]=y;
-					ncnt++;
-					}   //digit[ncnt]
-				}
-		 	if (guessFl==0 && (ncnt == 2)) {
-				guess_i= i;
-				mat_mb[i][guess_mb[1]] = false; // action guess last digit is prohibited  
-//	 			outTxt = outTxt + "Guess" + guess_i + "->" + guess_mb[0] + "\r\n";
-				outTxt = outTxt + "Guess " + guess_mb[0] + "->" + guess_i + "\r\n";
+       
+       if (guessFl==0 || ERROR != 0) {
+         var gnomax= matsz*matsz*matsz;
+         var gni =0;
+         var gs = new Array (gnomax); //will hold guess Number
+         var gi = new Array (gnomax); //will hold field nummer (i)
+         
+         
+         for (i=0; i<matsz*matsz;i++) {
+           if (mat[i]!=0) {continue;}  //field is not empty
+           ncnt=0;
+           for (y=1; y<matsz+1; y++) {
+             if (mat_mb [i][y]) {
+                 gs[gni] =y;
+                 gi[gni] =i;
+                 gni++;
+                 guess_mb[ncnt]=y;ncnt++;
+                 }   //digit[ncnt]
+           }
+           if (guessFl==0 && (ncnt == 2)) {
+             guess_i= i;
+             mat_mb[i][guess_mb[1]] = false; // action guess last digit is prohibited  
+
+//             outTxt = outTxt + "Guess" + guess_i + "->" + guess_mb[0] + "\r\n";
+             outTxt = outTxt + "Guess " + guess_mb[0] + "->" + guess_i + "\r\n";
+
               
-				guessFl=-1;  
-				break;  // 10/10-10 (for i) 
-				}
-			} // for i
-		} // if guessFl==0
+             guessFl=-1;  
+             break;  // 10/10-10 (for i) 
+           }  
+           
+         } // for i
+//       gnc=gnomax - 3;
+       gnc = gni;
+       g_str += "gni=" + gnc  + "\r\n";   
+       for (gni=0; gni<gnc; gni++) {
+            g_str += "guess nr:" + gni + " guess field:" + gi[gni]  + " guess:" + gs[gni] + "\r\n";   
+           
+            }
+            outTxt += g_str;
+        //    document.getElementById("textinput").value = g_str;
+      // document.sudoku.myarea.value = g_str;        
+       } // if guessFl==0
 
 
-	if (guessFl==0){
-		status = "ERROR3";printMat(); ERROR=3; contFlg=0; } 
-		document.sudoku.time.value = status;
-		} // if
-	missFieldsFormer=missFields;
-	if (tryl==1) start = new Date().getTime(); // timestamp now in start
-	if (WrCol!=0) outTxt = outTxt  + "\r\n.";
-	} //for tryl
+       if (guessFl==0){ status = "ERROR3";printMat(); ERROR=3; contFlg=0; } 
+       document.sudoku.time.value = status;
+    } // if
+    missFieldsFormer=missFields;
+    if (tryl==1) {
+         start = new Date().getTime(); // timestamp now in start
+    } 
+  if (WrCol!=0) outTxt = outTxt  + "\r\n.";
+  } //for tryl
 printMat(); // 2016
 status = "ERROR4"; //2016
 ERROR=4; //2016

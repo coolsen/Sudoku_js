@@ -2,25 +2,33 @@
 
 <title>JS Sudoku (html5)</title>
 <style type="text/css">
+
+
+
+input.blank   {text-align:center;
+	color:black;background:#FEE;
+	height:60px;
+	width:60px;
+	font-size:60%}
 input.ibk   {text-align:center;
 	color:black;background:#FEE;
-	height:40px;
-	width:40px;
+	height:60px;
+	width:60px;
 	font-size:200%}
 input.ibl  {text-align:center;
 	color:#00f;background:#FFF;
-	height:40px;
-	width:40px;
+	height:60px;
+	width:60px;
 	font-size:200%}
 input.ird  {text-align:center;
 	color:red;
-	height:40px;
-	width:40px;
+	height:60px;
+	width:60px;
 	font-size:200%}
 input.igr  {text-align:center;
 	color:#0f0;
-	height:40px;
-	width:40px;
+	height:60px;
+	width:60px;
 	font-size:200%}
 p.s	{letter-spacing:18px;}
 </style>
@@ -30,7 +38,8 @@ var  i,matsz=9, sqrmz=  Math.sqrt(matsz);
 var javaInform = new Array(matsz*matsz);
 var  strContent = new Array(10); 
 var  guess_mb = new Array(matsz);     
-var  mat = new Array(matsz*matsz); mmat = new Array(matsz*matsz); mat_st = new Array(matsz*matsz); mat_rn = new Array(matsz*matsz);
+var  mat = new Array(matsz*matsz); mmat = new Array(matsz*matsz); 
+var  mat_st = new Array(matsz*matsz); mmat_st = new Array(matsz*matsz); mat_rn = new Array(matsz*matsz);
 var  mat_cn = new Array(matsz*matsz); mat_kn = new Array(matsz*matsz);
 var  mat_co = new Array(matsz*matsz); mmat_co = new Array(matsz*matsz);  // mat color
 var   toDoField =    toDoField = new Array(matsz*matsz); toDoDigit = new Array(matsz*matsz);
@@ -40,7 +49,7 @@ var col = new Array(matsz); for (i=0; i <matsz; i++) col[i]=new Array(matsz);
 var kvad = new Array(matsz); for (i=0; i <matsz; i++) kvad[i]=new Array(matsz);
 var mat_mb = new Array((matsz+1)*(matsz+1)); for (i=0; i <((matsz+1)*(matsz+1)); i++) mat_mb[i]=new Array(matsz+1+1);
 var start,elapsed,flt,outTxt, g_str = "";
- var ERROR =0; contFlg=-1;
+ var ERROR =0; contFlg=-1;PossibFl=1;
    digit=0;  toDoNum=0; tryl=0; tdi=0; contFlg=-1; missFields=20; missFieldsFormer=0; fillSt=1; guessFl=0;
   var   guess_i=0;
   strContent[0] = "7   9    " + "  46 2   " + "2    7 65" + " 79   5 3" + "  2   9  " + "3 6   81 " + "64 5    7" +
@@ -60,6 +69,8 @@ var start,elapsed,flt,outTxt, g_str = "";
 
 
 strNo=0;
+
+
 function clearMat_mb() {
 for (i=0; i<matsz*matsz; i++)  {   //Fill the hole sudoku with "true" means that all fields(i) can bee all digits   
   for (y=0; y<matsz; y++)  { 
@@ -131,6 +142,7 @@ for (i=0; i<matsz*matsz; i++)  {    //FilL the hole sudoku (mat[i]) with "empty"
 
 
 function inForm(){
+ var i; 
  javaInform[0] = document.sudoku.f0.value;
  javaInform[1] = document.sudoku.f1.value;
  javaInform[2] = document.sudoku.f2.value;
@@ -212,12 +224,33 @@ function inForm(){
  javaInform[78] = document.sudoku.f78.value;
  javaInform[79] = document.sudoku.f79.value;
  javaInform[80] = document.sudoku.f80.value;
+
+//  for (i=0; i<matsz*matsz; i++) { 
+//  }
 }
+
+function possible( i) {
+var y;
+var ch = "";
+for (y=1; y<matsz+1; y++) {
+  if (mat_mb [i][y]) {ch +=  y; }   
+}
+return ch;
+
+} // function possible()
 
 function outForm(){
 var gs;
 
 var i=0,colorString="ibk", ch;
+
+
+//var x = document.getElementById("ShPossible");
+//if (x.checked == true) PossibFl=1;
+//else PossibFl=1;
+
+
+
 gs = document.getElementById("inputField").innerHTML; 
 gs = "";
 
@@ -229,7 +262,17 @@ for (i=0; i<matsz*matsz; i++) {
 
   if (i != 0 && i % 27 == 0) gs += "<br>";
   if (i != 0 && i % 9 == 0) gs += "<br>\n";
-  if (mat_co[i] == 0) colorString = "ibk";
+
+
+  if (mat_st[i] == 0) { //2016
+      if (PossibFl != 0) {	
+	
+          colorString = "blank"; //Possiblities with small digits
+          ch = possible(i);  
+      }
+      else colString = "ibk"; //Only a big blank 
+  } 
+  else  if (mat_co[i] == 0) colorString = "ibk";
   if (mat_co[i] == 1) colorString = "ibl";
   if (mat_co[i] == 2) colorString = "ird"; //2016
   if (mat_co[i] == 3) colorString = "igr"; //2016
@@ -237,17 +280,18 @@ for (i=0; i<matsz*matsz; i++) {
   gs += '<input type="text" name="f' + i + '" class="' + colorString + '" value= "' + ch + '"  >\n';
 } // for
 document.getElementById("inputField").innerHTML = gs; 
-}  
+}  // function outForm()
 
 function writeMat( index, number, fst) { 
 
 if (mat_mb [index][number]  == true ) { // fill in sudoku  
     mat[index] = number; 
     mat_st[index] = fst;
+    if(fst == 1) mat_co[index] = 0; //black and big 2016
     if(fst == 2) mat_co[index] = 1; //blue
     if(fst == 3) mat_co[index] = 2; //red 2016
     if(fst == 4) mat_co[index] = 3; //green 2016
-
+    for (var n=1; n<9+1; n++) {if (n == number) continue; mat_mb [index][n]  = false; } //2016
     }                 
 else {
     if (mat[index] == number) return 1; // if we are trying to set in same number as already in it's OK
@@ -332,6 +376,8 @@ for (i=0; i<matsz*matsz; i++)  {
         
   mmat[i] = mat[i];
   mmat_co[i] = mat_co[i];
+  mmat_st[i] = mat_st[i];
+
 }
 } // function
 
@@ -339,14 +385,11 @@ function restoreMat() {
   var costate,oldfillSt=fillSt;
   clearMat_mb();
   for (i=0; i<matsz*matsz; i++)  {   
-
-    if (mmat_co[i] == 1) costate=2;
-    else costate=1; 
-    if (mmat[i] != 0) {
-      writeMat( i, mmat[i], costate);
-    }// if
+       mat_co[i] = mmat_co[i]; 
+      writeMat( i, mmat[i], mmat_st[i]);
+//    }// if
   } // for
-//      readInSudoku();
+
 fillSt=oldfillSt;
 } // function
 
@@ -449,6 +492,10 @@ inForm();
 fillSt=1;
 for (i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
 	ch=javaInform[i];
+//      if (ch < 1 || ch >9) ch = " ";  
+        if (mat_st[i] == 1) continue;
+        if (ch.length != 1) continue; //2016
+//        if (ch.length != 1) ch = " "; //2016
 	if ((ch == " ") || (ch =="")) mat[i] =0;
 	else {        // only fill in if digit
 		digit = +ch;  // digit is int
@@ -580,7 +627,7 @@ function calculateS() {
             g_str += "guess nr:" + gni + " guess field:" + gi[gni]  + " guess:" + gs[gni] + "\r\n";   
            
             }
-            outTxt += g_str;
+//            outTxt += g_str; // mask in produce alot of output on difficult sudoku
         //    document.getElementById("textinput").value = g_str;
       // document.sudoku.myarea.value = g_str;        
        } // if guessFl==0
@@ -641,7 +688,7 @@ calculateS();
 
 </script>
 
-Version 5.07 english<br>
+Version 5.09 english<br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">
@@ -732,7 +779,7 @@ Version 5.07 english<br>
 <input type="text" name="f77" class="ibk" value=" ">
 :    :<input type="text" name="f78" class="ibk" value=" ">
 <input type="text" name="f79" class="ibk" value=" ">
-<input type="text" name="f80" class="ibk" value=" ">
+<input type="text" name="f80" class="ibk" value=" "> Show possiblities: <input type="checkbox" id="ShPossible">
 </div>
 
 

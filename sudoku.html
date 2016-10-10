@@ -50,6 +50,9 @@ var kvad = new Array(matsz); for (i=0; i <matsz; i++) kvad[i]=new Array(matsz);
 var mat_mb = new Array((matsz+1)*(matsz+1)); for (i=0; i <((matsz+1)*(matsz+1)); i++) mat_mb[i]=new Array(matsz+1+1);
 var start,elapsed,flt,outTxt, g_str = "";
  var ERROR =0; contFlg=-1;PossibFl=1;
+var Pos2i = new Array(30);
+var Pos2n = new Array(30);
+var l=0;
    digit=0;  toDoNum=0; tryl=0; tdi=0; contFlg=-1; missFields=20; missFieldsFormer=0; fillSt=1; guessFl=0;
   var   guess_i=0;
   strContent[0] = "7   9    " + "  46 2   " + "2    7 65" + " 79   5 3" + "  2   9  " + "3 6   81 " + "64 5    7" +
@@ -328,14 +331,33 @@ outForm(); // copy to browser
 
 
 function FindSafeMoves() {
+var dg= Array (10);
+l=0;
+
 //  *********************** find a field (mat[i] where only one digit is posible **********************    
 for (i=0; i<matsz*matsz;i++) {
   if (mat[i]!=0) {continue;}
   ncnt=0;
   for (y=1; y<matsz+1; y++) {
-    if (mat_mb [i][y]) {ncnt++; digit=y; }   
+    if (mat_mb [i][y]) { dg[ncnt++] =y; }   
+  } //for y
+//  if (ncnt == 1)  { toDoField[toDoNum] = i;toDoDigit[toDoNum++] = digit; }
+  if (ncnt == 1) {
+      ret = writeMat( i, dg[0] , fillSt);
+      if (ret==2) ERROR=-1; 
+      outTxt +=  "O:" + digit + "->" + i + " "; 
   }
-  if (ncnt == 1)  { toDoField[toDoNum] = i;toDoDigit[toDoNum++] = digit; }
+  if (ncnt == 2) {
+      Pos2i[l] = i;
+      Pos2n[l++] = dg[0];       
+      Pos2i[l] = i;
+      Pos2n[l++] = dg[1];       
+    
+  }
+
+
+
+
 }
 //  ***************** find a row and digit combination where only one field is posible ****************    
 for (x=0;x<matsz;x++) {
@@ -344,7 +366,13 @@ for (x=0;x<matsz;x++) {
     for (y=0;y<matsz;y++) {
       if((mat_mb[row [x][y]][digit]) && (mat[row [x][y]]==0)){i=row [x][y];ncnt++ ;   }
     }
-    if (ncnt==1)  { toDoField[toDoNum] = i;toDoDigit[toDoNum++] = digit; }
+//    if (ncnt==1)  { toDoField[toDoNum] = i;toDoDigit[toDoNum++] = digit; }
+    if (ncnt ==1) {
+        ret = writeMat( i, digit , fillSt);
+        if (ret==2) ERROR=-1; 
+         outTxt +=  "-:" + digit + "->" + i + " ";
+
+    }
   }
 }
 //  ***************** find a col and digit combination where only one field is posible ****************    
@@ -354,7 +382,12 @@ for (x=0;x<matsz;x++) {
     for (y=0;y<matsz;y++) {
       if((mat_mb[col [x][y]][digit]) && (mat[col [x][y]]==0)){i=col [x][y];ncnt++ ;   }
     }
-    if (ncnt==1)  { toDoField[toDoNum] = i;toDoDigit[toDoNum++] = digit; }
+//    if (ncnt==1)  { toDoField[toDoNum] = i;toDoDigit[toDoNum++] = digit; }
+    if (ncnt ==1) {
+        ret = writeMat( i, digit , fillSt);
+        if (ret==2) ERROR=-1; 
+         outTxt +=  "I:" + digit + "->" + i + " ";
+    }
   }
 }
 //  ***************** find a kvad and digit combination where only one field is posible ****************    
@@ -364,7 +397,12 @@ for (x=0;x<matsz;x++) {
     for (y=0;y<matsz;y++) {                                   //i=y+x*matsz; 
       if((mat_mb[kvad [x][y]][digit]) && (mat[kvad [x][y]]==0)){i=kvad [x][y];ncnt++ ;   }
     }
-    if (ncnt==1)  { toDoField[toDoNum] = i;toDoDigit[toDoNum++] = digit; }
+//    if (ncnt==1)  { toDoField[toDoNum] = i;toDoDigit[toDoNum++] = digit; }
+    if (ncnt ==1) {
+        ret = writeMat( i, digit , fillSt);
+        if (ret==2) ERROR=-1; 
+         outTxt +=  "#:" + digit + "->" + i + " ";
+    }
   }
 }  //for x
 } // function
@@ -483,6 +521,7 @@ printMat();
 } // function
 
 function readInSudoku() { 
+         
 document.sudoku.time.value =""; // clear time /status field
 ERROR=0;
 initContext();
@@ -490,9 +529,10 @@ fillSt=0;
 clearMat_mb();
 inForm();
 fillSt=1;
+  
 for (i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
 	ch=javaInform[i];
-//      if (ch < 1 || ch >9) ch = " ";  
+        if (ch < 1 || ch >9) ch = " ";  
         if (mat_st[i] == 1) continue;
         if (ch.length != 1) continue; //2016
 //        if (ch.length != 1) ch = " "; //2016
@@ -509,6 +549,7 @@ printMat();
 } // function
 
 function calculateS() {
+  var DEBUG_CNT=0;
   status= ".";
   outTxt = ""; //\r\n
 //  status= status + strNo;
@@ -531,20 +572,30 @@ function calculateS() {
   for (tryl=0; (tryl<30 && contFlg!=0); tryl++) {
     toDoNum=0;
 
+    if (fillSt==1)fillSt++; //2016 before FindSa....
     FindSafeMoves();
 
 //  TDI 1***************** insert Digits from toDo in mat[] (and set mat_mb[] correct) ****************    
     tdi=0;
-    if (fillSt==1)fillSt++;
+//    if (fillSt==1)fillSt++;
     WrCol=0; 
-    for (tdi=0; tdi<toDoNum; tdi++ ) {
-       i=toDoField[tdi]; digit=toDoDigit[tdi];
-       ret = writeMat( i, digit , fillSt);
-       if (ret==2) {ERROR=-1; }
-//       if (ret==0) {outTxt +=  i + "->" + digit + " "; WrCol++; if (WrCol % 8==0) { outTxt = outTxt + "\r\n"; WrCol=0} }
-       if (ret==0) {outTxt +=  digit + "->" + i + " "; WrCol++; if (WrCol % 8==0) { outTxt = outTxt + "\r\n"; WrCol=0} } //2016
+//    for (tdi=0; tdi<toDoNum; tdi++ ) {
+//       i=toDoField[tdi]; digit=toDoDigit[tdi];
+//       ret = writeMat( i, digit , fillSt);
+//       if (ret==2) ERROR=-1; 
+//       if (ret==0){ //2016
+//           outTxt +=  digit + "->" + i + " ";
+//           WrCol++; 
+//           if (WrCol % 8==0) { 
+//                outTxt = outTxt + "\r\n";
+//                WrCol=0
+//	   }
+//       }
 
-    } //for TDI
+//    } //for TDI
+
+
+
     missFields=queryMat();
     if (missFields!=0) contFlg=-1;
     if (missFields==0){
@@ -568,8 +619,7 @@ function calculateS() {
       ERROR = 0;
       guessFl = 0; // 10/10-10
 
-//      outTxt = outTxt + "No " + guess_i + "->" + guess_mb[1] + "\r\n"; // comentet out 2016
-      outTxt = outTxt + "Nej " + guess_mb[1] + "->" + guess_i + "\r\n"; // comentet out 2016
+      outTxt = outTxt + "No " + guess_mb[1] + "->" + guess_i + "\r\n"; // comentet out 2016
 
     } 
                           
@@ -594,7 +644,7 @@ function calculateS() {
          var gni =0;
          var gs = new Array (gnomax); //will hold guess Number
          var gi = new Array (gnomax); //will hold field nummer (i)
-         
+     
          
          for (i=0; i<matsz*matsz;i++) {
            if (mat[i]!=0) {continue;}  //field is not empty
@@ -607,14 +657,27 @@ function calculateS() {
                  guess_mb[ncnt]=y;ncnt++;
                  }   //digit[ncnt]
            }
-           if (guessFl==0 && (ncnt == 2)) {
+           if (guessFl==0 && (ncnt == 1)) {
              guess_i= i;
              mat_mb[i][guess_mb[1]] = false; // action guess last digit is prohibited  
+//             outTxt = outTxt + "Guess " + guess_mb[0] + "->" + guess_i + "\r\n";
+            outTxt += "l *=" + l +  "\r\n";   
+            for (i=0; i<l; i++) {
+//            outTxt += " guess field:" + Pos2i[i] +" guess:" + Pos2n[i] +  "\r\n";   
 
-//             outTxt = outTxt + "Guess" + guess_i + "->" + guess_mb[0] + "\r\n";
-             outTxt = outTxt + "Guess " + guess_mb[0] + "->" + guess_i + "\r\n";
+	    }
+// DEBUG HER
 
-              
+           DEBUG_CNT++;
+           if (DEBUG_CNT==20) { //20 = no debug return
+
+              printMat();
+              writeTxtS();
+              document.sudoku.myarea.value = outTxt; 
+
+              return;
+           } //if          DEBUG_CNT
+// DEBUG SLUT  
              guessFl=-1;  
              break;  // 10/10-10 (for i) 
            }  
@@ -628,6 +691,12 @@ function calculateS() {
            
             }
 //            outTxt += g_str; // mask in produce alot of output on difficult sudoku
+            outTxt += "l =" + l +  "\r\n"; 
+            for (i=0; i<l; i++) {
+            outTxt += " guess field:" + Pos2i[i] +" guess:" + Pos2n[i] +  "\r\n";   
+
+	    }
+  
         //    document.getElementById("textinput").value = g_str;
       // document.sudoku.myarea.value = g_str;        
        } // if guessFl==0
@@ -637,9 +706,9 @@ function calculateS() {
        document.sudoku.time.value = status;
     } // if
     missFieldsFormer=missFields;
-    if (tryl==1) {
-         start = new Date().getTime(); // timestamp now in start
-    } 
+//    if (tryl==1) {
+//         start = new Date().getTime(); // timestamp now in start
+//    } 
   if (WrCol!=0) outTxt = outTxt  + "\r\n.";
   } //for tryl
 printMat(); // 2016
@@ -686,9 +755,10 @@ calculateS();
 
 
 
+
 </script>
 
-Version 5.09 english<br>
+Version 5.09++ english<br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">
@@ -784,7 +854,8 @@ Version 5.09 english<br>
 
 
 </p>
-<textarea id="textinput" name="textinput" cols="85" rows="2"></textarea> <br>
+<textarea id="textinput" name="textinput" cols="85" rows="2">4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......
+</textarea> <br>
 <input type="button" name="readTxt" value="ReadTxt" onclick="readTxtS();">  <input type="button" name="readCalc" value="ReadCalcAll" onclick="readCalcA();"> 
 <br><br> 
 <textarea id="textoutput" name="textoutput" cols="85" rows="2"></textarea> <br>

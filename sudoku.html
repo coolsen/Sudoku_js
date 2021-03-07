@@ -2,6 +2,12 @@
 
 <title>Sudoku made with JavaSript and HTML5</title>
 <style type="text/css">
+input.blank   {text-align:center;
+    	   color:black;background:#FEE;
+	       height:60px;
+	       width:60px;
+	       font-size:60%}
+
 input.ibk   {text-align:center;
            color:black;
            height:40px;
@@ -17,6 +23,11 @@ input.ird  {text-align:center;
            height:40px;
            width:40px;
            font-size:150%}
+input.igr  {text-align:center;
+	       color:#0f0;
+	       height:60px;
+	       width:60px;
+	       font-size:200%}    
 p.s       {letter-spacing:18px;}
 </style>
  
@@ -54,6 +65,11 @@ var start,elapsed,flt,outTxt;
                    "  2   71 " + " 8  1 9  ";
  strContent[6] = "4     8 5" + " 3       " + "   7     " + " 2     6 " + "    8 4  " + "    1    " + "   6 3 7 " + 
                    "57 2     " + "1 4      ";
+strContent [7] = "85...24..72......9..4.........1.7..23.5...9...4...........8..7..17..........36.4.";
+ strContent [8] = "..53.....8......2..7..1.5..4....53...1..7...6..32...8..6.5....9..4....3......97..";
+ strContent [9] = "12..4......5.69.1...9...5.........7.7...52.9..3......2.9.6...5.4..9..8.1..3...9.4";
+ strContent [10] = "...57..3.1......2.7...234......8...4..7..4...49....6.5.42...3.....7..9....18.....";
+ strContent [11] = "...92......68.3...19..7...623..4.1....1...7....8.3..297...8..91...5.72......64...";
 
 
 strNo=0;
@@ -346,7 +362,9 @@ function readPreSudoku() { // read predefined sudoko
   ERROR=0;  fillSt=1;
   for (i=0; i<matsz*matsz; i++)  {    //Fill in the sudoku from strContent  
       ch = strContent[strNo].substring(i,(i+1)); // ch is a String (one letter)
-      if (ch == " ") ;
+//      if ((ch == " ") || (ch == "0") || (ch == ".")) ; off 2021
+	if ((ch == " ")  || (ch == ".")) ;
+
       else { //else ch                 // only fill in if digit
          digit = +ch;  // digit is int
          if (writeMat( i, digit , fillSt)!= 0) {
@@ -363,7 +381,7 @@ function readPreSudoku() { // read predefined sudoko
  
 document.sudoku.myarea.value = s;
 strNo++;
-if (strNo >6 ) strNo =0;
+if (strNo >11 ) strNo =0;
 printMat();
 } // function
 
@@ -400,7 +418,8 @@ function calculateS() {
   readInSudoku();
   if (ERROR!=0) {document.sudoku.time.value ="ERROR1"; return;}
   missFields=queryMat(); 
-  if (missFields>81-17) {document.sudoku.time.value ="ERROR2"; return;}
+  if (missFields>81-22) {document.sudoku.time.value ="ERROR2"; return;}
+ //if (missFields>81-17) {document.sudoku.time.value ="ERROR2"; return;}
 
   printMat(); // to clear old form on screen (if any) (not cleared by browser refress button!!!!!)
   if (ERROR != 0) { document.write( "The ERROR in input file Causing sudoku to leave !! #? :-) ...... <br>");  return;   } 
@@ -458,7 +477,8 @@ function calculateS() {
 
  //  *********************** find a field (mat[i] where only 2 digits are posible **********************    
        
-       if (guessFl==0 || ERROR != 0) {
+//       if (guessFl==0 || ERROR != 0) { out 2021
+       if ((fillSt==2 || fillSt==4) && guessFl==0) {//guess 2016
 
          for (i=0; i<matsz*matsz;i++) {
            if (mat[i]!=0) {continue;}  //field is not empty
@@ -527,7 +547,7 @@ calculateS();
 
 </script>
 
-Version 4.00 +++++++{6}  hej her<br>
+Version 4.22 <br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">

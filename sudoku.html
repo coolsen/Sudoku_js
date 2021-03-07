@@ -25,9 +25,9 @@ input.ird  {text-align:center;
            font-size:150%}
 input.igr  {text-align:center;
 	       color:#0f0;
-	       height:60px;
-	       width:60px;
-	       font-size:200%}    
+	       height:40px;
+	       width:40px;
+	       font-size:150%}    
 p.s       {letter-spacing:18px;}
 </style>
  
@@ -245,6 +245,7 @@ for (i=0; i<matsz*matsz; i++) {
   if (mat_co[i] == 0) colorString = "ibk";
   if (mat_co[i] == 1) colorString = "ibl";
   if (mat_co[i] == 2) colorString = "ird";
+  if (mat_co[i] == 3) colorString = "igr"; //2021
   gs += '<input type="text" name="f' + i + '" class="' + colorString + '" value= "' + ch + '"  >\n';
 } // for
 document.getElementById("inputField").innerHTML = gs; 
@@ -252,7 +253,15 @@ document.getElementById("inputField").innerHTML = gs;
 
 function writeMat( index, number, fst) {
 
-if (mat_mb [index][number]  == true ) { mat[index] = number; mat_st[index] = fst; if(fst >= 2) mat_co[index] = 1;}                // fill in sudoku       
+if (mat_mb [index][number]  == true ) {
+    mat[index] = number; 
+    mat_st[index] = fst; 
+    if(fst == 2) mat_co[index] = 1; //2021
+    if(fst == 3) mat_co[index] = 2; //2021
+    if(fst == 4) mat_co[index] = 3; //2021
+                                      
+                                      
+}                // fill in sudoku       
 else {
   if (mat[index] == number) return 1; // if we are trying to set in same number as already in it's OK
   else return 2;
@@ -499,7 +508,7 @@ function calculateS() {
        } // if guessFl==0
 
 
-       if (guessFl==0){ status = "ERROR3"; contFlg=0; } 
+       if (guessFl==0){ status = "ERROR3  -->" + strNo; printMat(); contFlg=0; } //printMat() 2021
        document.sudoku.time.value = status;
       document.sudoku.myarea.value = outTxt; // 2021
 
@@ -549,7 +558,7 @@ calculateS();
 
 </script>
 
-Version 4.24 <br>
+Version 4.27 <br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">

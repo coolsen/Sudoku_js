@@ -418,8 +418,8 @@ function calculateS() {
   readInSudoku();
   if (ERROR!=0) {document.sudoku.time.value ="ERROR1"; return;}
   missFields=queryMat(); 
-  if (missFields>81-22) {document.sudoku.time.value ="ERROR2"; return;}
- //if (missFields>81-17) {document.sudoku.time.value ="ERROR2"; return;}
+ // if (missFields>81-22) {document.sudoku.time.value ="ERROR2"; return;}
+ if (missFields>81-17) {document.sudoku.time.value ="ERROR2"; return;}
 
   printMat(); // to clear old form on screen (if any) (not cleared by browser refress button!!!!!)
   if (ERROR != 0) { document.write( "The ERROR in input file Causing sudoku to leave !! #? :-) ...... <br>");  return;   } 
@@ -549,7 +549,7 @@ calculateS();
 
 </script>
 
-Version 4.23 <br>
+Version 4.24 <br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">

@@ -5,17 +5,17 @@
 
 
 
-input.blank   {text-align:center;
+input.blank   {text-align:center; //blank
 	color:black;background:#FEE;
 	height:60px;
 	width:60px;
 	font-size:60%}
-input.ibk   {text-align:center;
+input.ibk   {text-align:center; //black
 	color:black;background:#FEE;
 	height:60px;
 	width:60px;
 	font-size:200%}
-input.ibl  {text-align:center;
+input.ibl  {text-align:center; //blue
 	color:#00f;background:#FFF;
 	height:60px;
 	width:60px;
@@ -49,7 +49,7 @@ var col = new Array(matsz); for (i=0; i <matsz; i++) col[i]=new Array(matsz);
 var kvad = new Array(matsz); for (i=0; i <matsz; i++) kvad[i]=new Array(matsz);
 var mat_mb = new Array((matsz+1)*(matsz+1)); for (i=0; i <((matsz+1)*(matsz+1)); i++) mat_mb[i]=new Array(matsz+1+1);
 var start,elapsed,flt,outTxt, g_str = "";
- var ERROR =0; contFlg=-1;PossibFl=1;
+ var ERROR =0; contFlg=-1;PossibFl=0;
 var PosTwoi = new Array(60);
 var PosTwon = new Array(60);
 var DEBUGC =0;
@@ -253,9 +253,9 @@ var gs;
 var i=0,colorString="ibk", ch;
 
 
-//var x = document.getElementById("ShPossible");
-//if (x.checked == true) PossibFl=1;
-//else PossibFl=1;
+var x = document.getElementById("ShPossible");
+if (x.checked == true) PossibFl=1;
+else PossibFl=0;
 
 
 
@@ -263,7 +263,7 @@ gs = document.getElementById("inputField").innerHTML;
 gs = "";
 
 for (i=0; i<matsz*matsz; i++) {
-	if (mat[i] == 0) ch = " ";
+	if (mat[i] == 0) ch = "";  // 2021 " " ->""
   else ch = mat[i]; 
 
   if (i != 0 && i % 3 == 0) gs += ":    :";
@@ -273,10 +273,12 @@ for (i=0; i<matsz*matsz; i++) {
 
 
   if (mat_st[i] == 0) { //2016
-      if (PossibFl != 0) {	
+      if (PossibFl != 0) {
+     
+//      if (PossibFl > 5) {	//2021
 	
           colorString = "blank"; //Possiblities with small digits
-          ch = possible(i);  
+          ch = possible(i);  // ch is string with all posibilties
       }
       else colString = "ibk"; //Only a big blank 
   } 
@@ -287,6 +289,7 @@ for (i=0; i<matsz*matsz; i++) {
 
   gs += '<input type="text" name="f' + i + '" class="' + colorString + '" value= "' + ch + '"  >\n';
 } // for
+  gs += 'Show possiblities: <input type="checkbox" id="ShPossible">'; //2021
 document.getElementById("inputField").innerHTML = gs; 
 }  // function outForm()
 
@@ -724,20 +727,8 @@ calculateS();
 </head>
 
 <body>
-<script language="JavaScript">
-  initContext();
-  clearMat_mb();
-  printMat();
-  clearS();
-  missFieldsFormer=0;
 
-
-
-
-
-</script>
-
-Version 5.10 english<br>
+Version 5.11 (2021) english<br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">
@@ -851,9 +842,12 @@ Version 5.10 english<br>
 
 </form>
 
-
-
-
-
+<script language="JavaScript">
+  initContext();
+  clearMat_mb();
+  printMat();
+  clearS();
+  missFieldsFormer=0;
+</script>
 
 </body></html>

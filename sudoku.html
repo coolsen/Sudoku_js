@@ -573,7 +573,7 @@ printMat();
 } // function
 
 function calculateS() {
-  var DEBUG_CNT=0;
+//  var DEBUG_CNT=0;
   var n;
   status= ".";
   l=0;            //Flush all PosTwo
@@ -593,7 +593,7 @@ function calculateS() {
   printMat(); // to clear old form on screen (if any) (not cleared by browser refress button!!!!!)
   if (ERROR != 0) { document.write( "The ERROR in input file Causing sudoku to leave !! #? :-) ...... <br>");  return;   } 
   toDoNum=0; 
-  if (missFields==0){ document.sudoku.time.value ="Det tog 0 millisekunder"; return;}
+  if (missFields==0){ document.sudoku.time.value ="It took 0 millisekunder"; return;}
   start = new Date().getTime(); // timestamp now in start
   contFlg=-1;
   for (tryl=0; (tryl<100 && contFlg!=0); tryl++) {
@@ -611,7 +611,7 @@ function calculateS() {
 
       var elapsed = new Date().getTime() - start;
       if (elapsed < 0) elapset+=24*60*60*1000; //if calculating is started just before midtnight
-      document.sudoku.time.value = "Det tog " + elapsed +  " millisekunder";
+      document.sudoku.time.value = "It took " + elapsed +  " millisekunder";
       printMat();
       writeTxtS();
       document.sudoku.myarea.value = outTxt; 
@@ -623,7 +623,20 @@ function calculateS() {
        if ((fillSt==2 || fillSt==4) && guessFl==0) {//guess 2016
 	   backupMat();  //2016
 	   outTxt +=  "Backup0 l=" + l; //2016
-	   lockPosTwo = 1;
+
+             DEBUGC++;
+	         if (DEBUGC ==1) {
+                 document.sudoku.time.value = "DEBUG!!  Time: " + elapsed +  " milliseconds";
+                 printMat();
+                 writeTxtS();
+                  document.sudoku.myarea.value = outTxt; 
+                 return; //calculateS()
+
+
+             }
+           
+           
+       lockPosTwo = 1;
            guessFl =1;
            rdln=0;
            bestScore = missFields; 
@@ -664,25 +677,14 @@ function calculateS() {
        rdln++; 
        fillSt = 4;
        if (rdln == l) {
-
              restoreMat();
-	     writeMat(bestI, bestN, 3 );
+	         writeMat(bestI, bestN, 3 );
              backupMat();
              outTxt +=  " Bestscore=" + bestScore +  " i=" + bestI +  " n=" + bestN + "\r\n";
              l=0;
              guessFl = 0;
              rdln=0;
              lockPosTwo = 0;
-             DEBUGC++;
-	     if (DEBUGC ==20) {
-                 document.sudoku.time.value = "Time: " + elapsed +  " milliseconds";
-                 printMat();
-                 writeTxtS();
-                  document.sudoku.myarea.value = outTxt; 
-                 return; //calculateS()
-
-
-             }
 //	     outTxt +=  "Pos2 Reset" + l; //2016
        } 
 
@@ -728,7 +730,7 @@ calculateS();
 
 <body>
 
-Version 5.11 (2021) english<br>
+Version 5.12 (2021) english<br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">

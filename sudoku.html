@@ -37,7 +37,7 @@ p.s	{letter-spacing:18px;}
 var  i,matsz=9, sqrmz=  Math.sqrt(matsz);
 var javaInform = new Array(matsz*matsz);
 var  strContent = new Array(10); 
-var  guess_mb = new Array(matsz);     
+var  guess_mb = new Array(matsz);  var mcnt = new Array(matsz);
 var  mat = new Array(matsz*matsz); mmat = new Array(matsz*matsz); 
 var  mat_st = new Array(matsz*matsz); mmat_st = new Array(matsz*matsz); mat_rn = new Array(matsz*matsz);
 var  mat_cn = new Array(matsz*matsz); mat_kn = new Array(matsz*matsz);
@@ -80,6 +80,9 @@ strNo=0;
 
 
 function clearMat_mb() {
+for (i=0; i<matsz; i++)  {     
+  mcnt[i] = 0; // number of diiits index 0..8 digit 1..9
+}   
 for (i=0; i<matsz*matsz; i++)  {   //Fill the hole sudoku with "true" means that all fields(i) can bee all digits   
   for (y=0; y<matsz; y++)  { 
     mat_mb[i][(y+1)] = true; 
@@ -289,7 +292,6 @@ for (i=0; i<matsz*matsz; i++) {
 
   gs += '<input type="text" name="f' + i + '" class="' + colorString + '" value= "' + ch + '"  >\n';
 } // for
-  gs += 'Show possiblities: <input type="checkbox" id="ShPossible">'; //2021
 document.getElementById("inputField").innerHTML = gs; 
 }  // function outForm()
 
@@ -298,6 +300,8 @@ function writeMat( index,  number,  fst) {
 
 if (mat_mb [index][number]  == true ) { // fill in sudoku  
     mat[index] = number; 
+    mcnt[number-1]++; // number of digits index 0..8 digit 1..9
+
     mat_st[index] = fst;
     if(fst == 1) mat_co[index] = 0; //black and big 2016
     if(fst == 2) mat_co[index] = 1; //blue
@@ -575,10 +579,23 @@ printMat();
 function calculateS() {
 //  var DEBUG_CNT=0;
   var n;
+  var idx;
+  var totn =0;  
   status= ".";
   l=0;            //Flush all PosTwo
   lockPosTwo = 0; //no lock
-  outTxt = ""; //\r\n
+  outTxt = "["; //\r\n
+  
+  for (idx=0; idx<matsz; idx++)  {     
+    outTxt += mcnt[idx] + ","; // number of diiits index 0..8 digit 1..9
+    totn   += mcnt[idx];  
+  }    
+    
+  outTxt += "] " + totn  + "\n";  //\r\n
+//  document.sudoku.myarea.value = outTxt;
+//  outTxt = "\r\n"; //\r\n
+
+    
 //  status= status + strNo;
   guessFl=0; 
   readInSudoku();
@@ -730,7 +747,7 @@ calculateS();
 
 <body>
 
-Version 5.13 (2021) english<br>
+Version 5.14 (2021) english<br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">
@@ -821,12 +838,12 @@ Version 5.13 (2021) english<br>
 <input type="text" name="f77" class="ibk" value=" ">
 :    :<input type="text" name="f78" class="ibk" value=" ">
 <input type="text" name="f79" class="ibk" value=" ">
-<input type="text" name="f80" class="ibk" value=" "> Show possiblities: <input type="checkbox" id="ShPossible">
+<input type="text" name="f80" class="ibk" value=" "> 
 </div>
 
 
 </p>
-<textarea id="textinput" name="textinput" cols="85" rows="2">4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......
+<textarea id="textinput" name="textinput" cols="85" rows="2">4.....8.5.3........5.7......2.....6.....8.4......1....2..6.3.7.57.2.....1.4......
 </textarea> <br>
 <input type="button" name="readTxt" value="ReadTxt" onclick="readTxtS();">  <input type="button" name="readCalc" value="ReadCalcAll" onclick="readCalcA();"> 
 <br><br> 
@@ -836,6 +853,7 @@ Version 5.13 (2021) english<br>
 
 
 <textarea name="myarea" cols="100" rows="6"></textarea> <br>
+Show possiblities: <input type="checkbox" id="ShPossible"> <br>   
 <input type="button" name="clear" value="Clear" onclick="clearS();">
 <input type="button" name="readPre" value="Get one sudoku" onclick="readPreSudoku();"> 
 <input type="button" name="auto" value="auto" onclick="autof();"> 

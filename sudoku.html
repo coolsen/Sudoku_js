@@ -719,19 +719,6 @@ document.sudoku.myarea.value = outTxt; //2016
 document.sudoku.time.value = status; //2016
 } // function calculate
 
-function clearS() {
-  document.sudoku.myarea.value = "\r\n"; 
-  document.sudoku.time.value ="."; // clear time /status field
-  ERROR=0;                        // No ERROR in a clean sudoku
-  fillSt=0; 
-  initContext();
-  clearMat_mb();
-  printMat();
-
-
-} // function clearS
-
-
 function autof() { 
 for (var trc=0 ; trc < 10; trc ++) {
 
@@ -741,13 +728,29 @@ calculateS();
 }
 
 
+function clearS() {
+  document.sudoku.myarea.value = "\r\n"; 
+  document.sudoku.time.value ="."; // clear time /status field
+  ERROR=0;                        // No ERROR in a clean sudoku
+  fillSt=0; 
+  initContext();
+  clearMat_mb();
+  printMat();
+  autof();  
+  clearMat_mb();
+  printMat();
+
+} // function clearS
+
+
+
 
 </script>
 </head>
 
 <body>
 
-Version 5.15 (2021) english<br>
+Version 5.16 (2021) english<br>
 <form name="sudoku" id="sudoku">
 <p class="s"> <div id="inputField">
 <input type="text" name="f0" class="ibk" value=" ">
